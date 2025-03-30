@@ -1,0 +1,31 @@
+{
+  "name": "chat-application-settings",
+  "properties": {
+    "MYSQL_URL": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/MYSQL_URL)",
+    "MYSQL_USERNAME": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/MYSQL_USERNAME)",
+    "MYSQL_PASSWORD": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/MYSQL_PASSWORD)",
+
+    "REDIS_HOST": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/REDIS_HOST)",
+    "REDIS_PORT": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/REDIS_PORT)",
+    "REDIS_PASSWORD": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/REDIS_PASSWORD)",
+
+    "JWT_SECRET_KEY": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/JWT_SECRET_KEY)",
+
+    "NAVER_CLIENT_ID": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/NAVER_CLIENT_ID)",
+    "NAVER_CLIENT_SECRET": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/NAVER_CLIENT_SECRET)",
+    "NAVER_REDIRECT_URI": "https://inertia-app.azurewebsites.net/login/oauth2/code/naver",
+
+    "GOOGLE_CLIENT_ID": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/GOOGLE_CLIENT_ID)",
+    "GOOGLE_CLIENT_SECRET": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/GOOGLE_CLIENT_SECRET)",
+    "GOOGLE_REDIRECT_URI": "https://inertia-app.azurewebsites.net/login/oauth2/code/google",
+
+    "GITHUB_CLIENT_ID": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/GITHUB_CLIENT_ID)",
+    "GITHUB_CLIENT_SECRET": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/GITHUB_CLIENT_SECRET)",
+    "GITHUB_REDIRECT_URI": "https://inertia-app.azurewebsites.net/login/oauth2/code/github",
+
+    "AWS_S3_BUCKET": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/AWS_S3_BUCKET)",
+    "AWS_REGION": "ap-northeast-2",
+    "AWS_ACCESS_KEY": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/AWS_ACCESS_KEY)",
+    "AWS_SECRET_KEY": "@Microsoft.KeyVault(SecretUri=https://inertia-keyvault.vault.azure.net/secrets/AWS_SECRET_KEY)"
+  }
+}

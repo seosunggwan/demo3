@@ -1,0 +1,59 @@
+import { Routes, Route } from "react-router-dom";
+import JoinForm from "../pages/Join";
+import LoginForm from "../pages/Login";
+import Home from "../pages/Home";
+import OAuth2Redirect from "../services/Oauth2Redirect";
+import Admin from "../pages/Admin";
+import Logout from "../pages/Logout";
+import MemberList from "../pages/MemberList";
+import SimpleWebsocket from "../pages/SimpleWebsocket";
+import StompChatPage from "../pages/StompChatPage";
+import GroupChattingList from "../pages/GroupChattingList";
+import MyChatPage from "../pages/MyChatPage";
+import ChatPage from "../pages/ChatPage";
+import NotFound from "../pages/NotFound";
+import ItemList from "../pages/ItemList";
+import ItemForm from "../pages/ItemForm";
+import OrderList from "../pages/OrderList";
+import OrderForm from "../pages/OrderForm";
+import { useLogin } from "../contexts/AuthContext";
+
+export default function MyRoutes() {
+  const { isLoggedIn } = useLogin();
+
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {!isLoggedIn && (
+          <>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/join" element={<JoinForm />} />
+          </>
+        )}
+        {isLoggedIn && <Route path="/logout" element={<Logout />} />}
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/oauth2-jwt-header" element={<OAuth2Redirect />} />
+        <Route path="/member/list" element={<MemberList />} />
+        <Route path="/simple/chat" element={<SimpleWebsocket />} />
+        <Route path="/chatpage/:roomId" element={<StompChatPage />} />
+        <Route path="/groupchatting/list" element={<GroupChattingList />} />
+        <Route path="/mychatpage" element={<MyChatPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+
+        {/* 상품 관련 라우트 */}
+        <Route path="/items" element={<ItemList />} />
+        <Route path="/items/new" element={<ItemForm />} />
+        <Route path="/items/:id/edit" element={<ItemForm />} />
+
+        {/* 주문 관련 라우트 */}
+        <Route path="/orders" element={<OrderList />} />
+        <Route path="/order" element={<OrderForm />} />
+
+        {/* 404 페이지는 항상 마지막에 위치 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}

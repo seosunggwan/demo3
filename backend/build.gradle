@@ -1,0 +1,56 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.10'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Boot 기본 스타터 패키지들
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA (ORM)
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis 연동
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // OAuth2 소셜 로그인
+	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security (보안)
+	implementation 'org.springframework.boot:spring-boot-starter-web' // Spring MVC (REST API)
+	implementation 'org.springframework.boot:spring-boot-starter-websocket' // WebSocket 지원
+
+
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.574' // AWS SDK v1 추가
+
+	// JWT (JSON Web Token) 인증 관련 라이브러리 (0.12.5 최신 버전)
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+	// Lombok (코드 간소화 - Getter, Setter, Constructor 자동 생성)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// MySQL 드라이버 (데이터베이스 연동)
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// 테스트 관련 라이브러리
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' // 기본 테스트 지원
+	testImplementation 'org.springframework.security:spring-security-test' // Security 관련 테스트 지원
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // JUnit 실행기
+
+	// .env 파일 지원을 위한 의존성
+	implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

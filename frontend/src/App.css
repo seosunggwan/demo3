@@ -1,0 +1,70 @@
+/* 화면을 중앙에 배치하고, 화면을 꽉 채우도록 설정 */
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* 기존 로고 스타일 (변경 없음) */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+/* 로고 회전 애니메이션 (변경 없음) */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* 카드에 여백 추가 (변경 없음) */
+.card {
+  padding: 2em;
+}
+
+/* 문서 링크 색상 (변경 없음) */
+.read-the-docs {
+  color: #888;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* 아이콘 간격 축소 */
+  margin-top: 20px; /* 상단 여백 축소 */
+}
+
+.social-icon {
+  width: 24px; /* 너비 축소 */
+  height: 24px; /* 높이 축소 */
+  border-radius: 50%; /* 아이콘 둥글게 */
+  transition: transform 0.2s ease-in-out;
+}
+
+.social-icon:hover {
+  transform: scale(1.1); /* 호버 시 확대 효과 */
+}
