@@ -35,7 +35,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
-	// Lombok (코드 간소화 - Getter, Setter, Constructor 자동 생성)
+	// Lombok (코드 간소화 - Getter, Setter, Constructor 자동 생성)ss
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
