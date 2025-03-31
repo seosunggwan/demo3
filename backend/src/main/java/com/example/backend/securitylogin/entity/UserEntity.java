@@ -47,4 +47,22 @@ public class UserEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private List<Order> orders = new ArrayList<>();
+    
+    /**
+     * 사용자 이름을 업데이트합니다.
+     * 
+     * @param username 새로운 사용자 이름
+     */
+    public void updateUsername(String username) {
+        this.username = username;
+    }
+    
+    /**
+     * 주소 정보를 업데이트합니다.
+     * 
+     * @param address 새로운 주소 정보
+     */
+    public void updateAddress(Address address) {
+        this.address = address;
+    }
 }

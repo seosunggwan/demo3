@@ -10,6 +10,9 @@ const ItemList = () => {
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchKeyword, setSearchKeyword] = useState(
+    searchParams.get("keyword") || ""
+  );
   const [pageInfo, setPageInfo] = useState({
     page: 0,
     size: 8,
@@ -22,9 +25,15 @@ const ItemList = () => {
   const navigate = useNavigate();
   const { isLoggedIn, getAccessToken } = useLogin();
 
-  // URL에서 페이지 파라미터 가져오기
+  // URL에서 파라미터 가져오기
   const page = parseInt(searchParams.get("page") || "0");
   const size = parseInt(searchParams.get("size") || "8");
+  const keyword = searchParams.get("keyword") || "";
+
+  // 검색어 상태 초기화
+  useEffect(() => {
+    setSearchKeyword(keyword);
+  }, [keyword]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -47,8 +56,14 @@ const ItemList = () => {
         }
 
         setIsAuthenticated(true);
-        // 페이지 정보로 상품 목록 조회
-        await fetchItemsWithPaging(page, size);
+
+        if (keyword) {
+          // 검색어가 있으면 검색 API 호출
+          await searchItemsWithPaging(keyword, page, size);
+        } else {
+          // 검색어가 없으면 일반 목록 조회
+          await fetchItemsWithPaging(page, size);
+        }
       } catch (error) {
         console.error("인증 확인 중 오류 발생:", error);
         setIsAuthenticated(false);
@@ -57,7 +72,7 @@ const ItemList = () => {
     };
 
     checkAuth();
-  }, [isLoggedIn, navigate, getAccessToken, page, size]);
+  }, [isLoggedIn, navigate, getAccessToken, page, size, keyword]);
 
   // 페이지네이션 적용 상품 목록 조회
   const fetchItemsWithPaging = async (page, size) => {
@@ -88,9 +103,81 @@ const ItemList = () => {
     }
   };
 
+  // 검색 API를 사용한 상품 목록 조회
+  const searchItemsWithPaging = async (keyword, page, size) => {
+    try {
+      setLoading(true);
+      console.log(
+        `상품 검색 시작: 키워드='${keyword}', 페이지=${page}, 사이즈=${size}`
+      );
+
+      const response = await axiosInstance.get(
+        `/api/items/search?keyword=${encodeURIComponent(
+          keyword
+        )}&page=${page}&size=${size}`
+      );
+
+      if (response.data && response.data.items) {
+        setItems(response.data.items);
+        setPageInfo(response.data.pageInfo);
+        console.log(
+          `검색 결과: ${response.data.items.length}개 상품 (총 ${response.data.pageInfo.total}개)`
+        );
+      } else {
+        setItems([]);
+        console.error("API 응답 형식이 올바르지 않습니다:", response.data);
+      }
+    } catch (error) {
+      console.error("상품 검색 중 오류 발생:", error);
+
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+        redirectToLogin(navigate, "/items");
+      } else {
+        setError("상품 검색 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePageChange = (newPage) => {
     // URL 파라미터 업데이트
-    setSearchParams({ page: newPage, size });
+    const newParams = {
+      page: newPage,
+      size,
+    };
+
+    // 검색어가 있으면 추가
+    if (keyword) {
+      newParams.keyword = keyword;
+    }
+
+    setSearchParams(newParams);
+  };
+
+  // 검색 처리
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log("검색 요청:", searchKeyword);
+
+    const newParams = {
+      page: 0,
+      size,
+    };
+
+    // 검색어가 있는 경우만 파라미터에 추가
+    if (searchKeyword && searchKeyword.trim() !== "") {
+      newParams.keyword = searchKeyword.trim();
+    }
+
+    setSearchParams(newParams);
+  };
+
+  // 검색어 초기화
+  const handleClearSearch = () => {
+    setSearchKeyword("");
+    setSearchParams({ page: 0, size });
   };
 
   // 페이지네이션 컴포넌트
@@ -273,6 +360,34 @@ const ItemList = () => {
           >
             상품 등록
           </Link>
+        </div>
+
+        {/* 검색 폼 추가 */}
+        <div className="mb-6">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="상품명으로 검색"
+              className="flex-1 p-2 border border-gray-300 rounded"
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+            >
+              검색
+            </button>
+            {keyword && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded"
+              >
+                초기화
+              </button>
+            )}
+          </form>
         </div>
 
         <div

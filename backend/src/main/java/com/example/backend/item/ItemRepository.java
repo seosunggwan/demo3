@@ -45,6 +45,32 @@ public class ItemRepository {
     }
 
     /**
+     * 검색어로 상품 목록 조회
+     * @param keyword 검색어
+     * @param offset 시작 위치
+     * @param limit 가져올 데이터 수
+     * @return 검색된 상품 목록
+     */
+    public List<Item> findByNameContaining(String keyword, int offset, int limit) {
+        return em.createQuery("select i from Item i where lower(i.name) like lower(:keyword) order by i.id desc", Item.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    /**
+     * 검색어에 해당하는 상품 수 조회
+     * @param keyword 검색어
+     * @return 검색된 상품 수
+     */
+    public long countByNameContaining(String keyword) {
+        return em.createQuery("select count(i) from Item i where lower(i.name) like lower(:keyword)", Long.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getSingleResult();
+    }
+
+    /**
      * 전체 상품 수 조회
      * @return 전체 상품 수
      */

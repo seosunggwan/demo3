@@ -6,14 +6,32 @@ import { redirectToLogin } from "../utils/auth";
  * - GET 메서드로 요청
  * - 토큰 만료 시 자동으로 재발급 처리 (axios 인터셉터 활용)
  * - 페이지네이션 지원 추가
+ * - 검색 기능 추가
  */
-const fetchGroupChatRooms = async (page = 0, size = 10, navigate, location) => {
+const fetchGroupChatRooms = async (
+  page = 0,
+  size = 10,
+  navigate,
+  location,
+  keyword = ""
+) => {
   try {
     // axios 인스턴스 사용 (인터셉터에서 토큰 만료 처리)
+    const params = { page, size };
+
+    // 검색어가 있는 경우 파라미터 추가
+    if (keyword && keyword.trim() !== "") {
+      params.keyword = keyword.trim();
+      console.log("검색어 파라미터 추가:", keyword);
+    }
+
+    console.log("API 요청 파라미터:", params);
+
     const response = await axiosInstance.get("/chat/room/group/list", {
-      params: { page, size },
+      params: params,
     });
 
+    console.log("API 응답 데이터:", response.data);
     return response.data;
   } catch (error) {
     console.error("그룹 채팅방 목록 조회 중 오류 발생:", error);

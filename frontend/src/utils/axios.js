@@ -33,6 +33,12 @@ axiosInstance.interceptors.request.use(
     } else {
       console.log(`요청 인터셉터: ${config.url}에 토큰 없음`);
     }
+
+    // 요청 파라미터 로깅 추가
+    if (config.params) {
+      console.log(`요청 인터셉터: ${config.url}에 파라미터:`, config.params);
+    }
+
     return config;
   },
   (error) => {

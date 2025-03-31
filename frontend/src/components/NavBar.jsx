@@ -33,6 +33,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ArticleIcon from "@mui/icons-material/Article";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 export default function NavBar() {
   const { isLoggedIn, logout, loginUser } = useLogin();
@@ -121,7 +122,7 @@ export default function NavBar() {
           <>
             <ListItem button onClick={() => handleNavigate("/profile")}>
               <ListItemIcon>
-                <PersonIcon />
+                <AccountCircleIcon />
               </ListItemIcon>
               <ListItemText primary="프로필" />
             </ListItem>
@@ -362,7 +363,7 @@ export default function NavBar() {
                   >
                     <MenuItem onClick={() => handleNavigate("/profile")}>
                       <ListItemIcon>
-                        <PersonIcon fontSize="small" />
+                        <AccountCircleIcon fontSize="small" />
                       </ListItemIcon>
                       프로필
                     </MenuItem>

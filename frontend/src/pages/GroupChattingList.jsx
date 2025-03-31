@@ -20,7 +20,12 @@ import {
   CircularProgress,
   Pagination,
   Box,
+  InputAdornment,
+  IconButton,
+  Grid,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import fetchGroupChatRooms from "../services/fetchGroupChatRooms";
 import createGroupChatRoom from "../services/createGroupChatRoom";
 import joinGroupChatRoom from "../services/joinGroupChatRoom";
@@ -33,6 +38,9 @@ const GroupChattingList = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   const [newRoomTitle, setNewRoomTitle] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState(
+    searchParams.get("keyword") || ""
+  );
   const [pageInfo, setPageInfo] = useState({
     page: 0,
     size: 10,
@@ -45,17 +53,37 @@ const GroupChattingList = () => {
   // URL에서 페이지 파라미터 가져오기
   const page = parseInt(searchParams.get("page") || "0");
   const size = parseInt(searchParams.get("size") || "10");
+  const keyword = searchParams.get("keyword") || "";
+
+  // 검색어 상태 업데이트
+  useEffect(() => {
+    setSearchKeyword(keyword);
+  }, [keyword]);
 
   // ✅ 채팅방 목록 불러오기
   useEffect(() => {
-    loadChatRoom(page, size);
-  }, [navigate, location, page, size]);
+    console.log(
+      "채팅방 목록 로드: page =",
+      page,
+      "size =",
+      size,
+      "keyword =",
+      keyword
+    );
+    loadChatRoom(page, size, keyword);
+  }, [navigate, location, page, size, keyword]);
 
-  const loadChatRoom = async (page, size) => {
+  const loadChatRoom = async (page, size, keyword) => {
     try {
       setLoading(true);
       // 새로 만든 fetchGroupChatRooms 서비스 사용 (페이지네이션 파라미터 추가)
-      const data = await fetchGroupChatRooms(page, size, navigate, location);
+      const data = await fetchGroupChatRooms(
+        page,
+        size,
+        navigate,
+        location,
+        keyword
+      );
 
       if (data && data.rooms && Array.isArray(data.rooms)) {
         setChatRoomList(data.rooms);
@@ -77,6 +105,38 @@ const GroupChattingList = () => {
   const handlePageChange = (event, newPage) => {
     const newParams = {
       page: newPage - 1,
+      size,
+      ...(keyword && { keyword }),
+    };
+    setSearchParams(newParams);
+  };
+
+  // 검색 처리
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log("검색 폼 제출: 검색어 =", searchKeyword);
+
+    // 검색어가 없을 경우에도 명시적으로 빈 문자열 처리
+    const newParams = {
+      page: 0,
+      size,
+    };
+
+    // 검색어가 있을 경우에만 keyword 파라미터 추가
+    if (searchKeyword && searchKeyword.trim() !== "") {
+      newParams.keyword = searchKeyword.trim();
+    }
+
+    console.log("설정할 URL 파라미터:", newParams);
+    setSearchParams(newParams);
+  };
+
+  // 검색어 초기화
+  const handleClearSearch = () => {
+    console.log("검색어 초기화");
+    setSearchKeyword("");
+    const newParams = {
+      page: 0,
       size,
     };
     setSearchParams(newParams);
@@ -112,7 +172,7 @@ const GroupChattingList = () => {
       // 모달 닫고 목록 새로고침
       setNewRoomTitle("");
       setShowCreateRoomModal(false);
-      loadChatRoom(page, size);
+      loadChatRoom(page, size, keyword);
     } catch (error) {
       console.error("채팅방 생성 중 오류 발생:", error);
     }
@@ -123,14 +183,49 @@ const GroupChattingList = () => {
       <Card>
         <CardHeader title="채팅방 목록" />
         <CardContent>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => setShowCreateRoomModal(true)}
-            sx={{ float: "right", mb: 2 }}
-          >
-            채팅방 생성
-          </Button>
+          <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <Grid item xs={12} sm={6} md={8}>
+              <form onSubmit={handleSearch}>
+                <TextField
+                  fullWidth
+                  placeholder="채팅방 이름으로 검색"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                    endAdornment: searchKeyword && (
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleClearSearch} edge="end">
+                          <ClearIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
+                  size="small"
+                />
+              </form>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              sx={{ textAlign: { xs: "left", sm: "right" } }}
+            >
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => setShowCreateRoomModal(true)}
+              >
+                채팅방 생성
+              </Button>
+            </Grid>
+          </Grid>
 
           <TableContainer>
             {loading ? (
@@ -156,7 +251,9 @@ const GroupChattingList = () => {
                   {chatRoomList.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={3} align="center">
-                        채팅방이 없습니다.
+                        {keyword
+                          ? `'${keyword}' 검색 결과가 없습니다.`
+                          : "채팅방이 없습니다."}
                       </TableCell>
                     </TableRow>
                   ) : (

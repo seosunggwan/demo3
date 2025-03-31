@@ -19,6 +19,7 @@ import OrderForm from "../pages/OrderForm";
 import BoardList from "../pages/BoardList";
 import BoardDetail from "../pages/BoardDetail";
 import BoardForm from "../pages/BoardForm";
+import Profile from "../pages/Profile";
 import { useLogin } from "../contexts/AuthContext";
 
 export default function MyRoutes() {
@@ -34,7 +35,12 @@ export default function MyRoutes() {
             <Route path="/join" element={<JoinForm />} />
           </>
         )}
-        {isLoggedIn && <Route path="/logout" element={<Logout />} />}
+        {isLoggedIn && (
+          <>
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/profile" element={<Profile />} />
+          </>
+        )}
         <Route path="/admin" element={<Admin />} />
         <Route path="/home" element={<Home />} />
         <Route path="/oauth2-jwt-header" element={<OAuth2Redirect />} />

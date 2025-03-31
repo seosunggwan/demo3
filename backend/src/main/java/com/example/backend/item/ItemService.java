@@ -52,6 +52,29 @@ public class ItemService {
         return new PagedItemsDto(items, page, size, total);
     }
 
+    /**
+     * 검색어로 상품 목록 조회 (페이지네이션 적용)
+     * @param keyword 검색어
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지당 항목 수
+     * @return 검색 결과 상품 목록과 페이지 정보
+     */
+    public PagedItemsDto searchItemsWithPaging(String keyword, int page, int size) {
+        int offset = page * size;
+        List<Item> items;
+        long total;
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            items = itemRepository.findByNameContaining(keyword.trim(), offset, size);
+            total = itemRepository.countByNameContaining(keyword.trim());
+        } else {
+            items = itemRepository.findAllWithPaging(offset, size);
+            total = itemRepository.count();
+        }
+        
+        return new PagedItemsDto(items, page, size, total);
+    }
+
     public Item findOne(Long itemId) {
         return itemRepository.findOne(itemId);
     }

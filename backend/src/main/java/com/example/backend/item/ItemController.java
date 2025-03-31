@@ -77,6 +77,35 @@ public class ItemController {
     }
 
     /**
+     * 상품 이름으로 검색 (페이지네이션 적용)
+     * @param keyword 검색어
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지당 항목 수
+     * @return 검색 결과 상품 목록과 페이지 정보
+     */
+    @GetMapping("/search")
+    @Transactional(readOnly = true)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> searchWithPaging(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("상품 검색 요청 - 검색어: '{}', 페이지: {}, 사이즈: {}", keyword, page, size);
+        
+        // 페이지 크기 제한
+        if (size > 50) {
+            size = 50;
+        }
+        
+        // 서비스 호출
+        com.example.backend.item.dto.PagedItemsDto result = itemService.searchItemsWithPaging(keyword, page, size);
+        
+        log.info("검색 결과: 페이지 {}의 상품 {}개 조회 완료 (전체 {}개)", 
+                page, result.getItems().size(), result.getPageInfo().getTotal());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * 새로운 상품 등록을 위한 폼 데이터를 반환
      * @return 빈 BookForm 객체
      */

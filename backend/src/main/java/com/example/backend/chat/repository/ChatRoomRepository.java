@@ -13,4 +13,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     List<ChatRoom> findByIsGroupChat(String isGroupChat);
     
     Page<ChatRoom> findByIsGroupChat(String isGroupChat, Pageable pageable);
+    
+    // 그룹 채팅방 중 이름으로 검색
+    Page<ChatRoom> findByIsGroupChatAndNameContainingIgnoreCase(String isGroupChat, String keyword, Pageable pageable);
 }
