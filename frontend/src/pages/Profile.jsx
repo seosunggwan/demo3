@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import { useLogin } from "../contexts/AuthContext";
 import { fetchUserProfile, updateUserProfile } from "../services/userService";
+import { updateProfileWithImage } from "../services/profileService";
+import ProfileImageUploader from "../components/ProfileImageUploader";
 
 const Profile = () => {
   const { isLoggedIn } = useLogin();
@@ -24,6 +26,7 @@ const Profile = () => {
     city: "",
     street: "",
     zipcode: "",
+    profileImageUrl: "",
   });
   const [editMode, setEditMode] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -87,6 +90,29 @@ const Profile = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 프로필 이미지 업로드 완료 핸들러
+  const handleProfileImageUploaded = async (imageUrl) => {
+    try {
+      // 이미지 URL로 프로필 정보 업데이트
+      await updateProfileWithImage(imageUrl);
+
+      // 상태 업데이트
+      setProfile((prev) => ({
+        ...prev,
+        profileImageUrl: imageUrl,
+      }));
+
+      // 성공 메시지 표시 (ProfileImageUploader에서 이미 표시하므로 여기서는 생략)
+    } catch (error) {
+      console.error("프로필 이미지 업데이트 실패:", error);
+      setSnackbar({
+        open: true,
+        message: error.message || "프로필 이미지 업데이트에 실패했습니다.",
+        severity: "error",
+      });
     }
   };
 
@@ -166,6 +192,18 @@ const Profile = () => {
           </Box>
         ) : (
           <Grid container spacing={3}>
+            {/* 프로필 이미지 업로더 */}
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "center", mb: 2 }}
+            >
+              <ProfileImageUploader
+                initialImage={profile.profileImageUrl}
+                onImageUploaded={handleProfileImageUploaded}
+              />
+            </Grid>
+
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth

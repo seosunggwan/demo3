@@ -14,6 +14,7 @@ public class UserProfileDto {
     private Long id;
     private String username;
     private String email;
+    private String profileImageUrl;
     
     // 주소 정보
     private String city;
@@ -36,5 +37,10 @@ public class UserProfileDto {
             this.street = address.getStreet();
             this.zipcode = address.getZipcode();
         }
+    }
+    
+    // 프로필 이미지 URL 설정 메소드
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 } 

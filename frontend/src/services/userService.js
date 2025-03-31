@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosInstance from "../utils/axios";
 
 /**
  * 사용자 프로필 정보를 가져오는 함수
@@ -12,11 +13,7 @@ export const fetchUserProfile = async () => {
       throw new Error("인증 토큰이 없습니다. 다시 로그인해주세요.");
     }
 
-    const response = await axios.get("/api/users/profile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get("/api/users/profile");
 
     return response.data;
   } catch (error) {
@@ -46,11 +43,7 @@ export const updateUserProfile = async (profileData) => {
       throw new Error("인증 토큰이 없습니다. 다시 로그인해주세요.");
     }
 
-    const response = await axios.put("/api/users/profile", profileData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.put("/api/users/profile", profileData);
 
     return response.data;
   } catch (error) {

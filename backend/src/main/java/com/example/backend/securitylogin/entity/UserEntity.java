@@ -42,6 +42,7 @@ public class UserEntity extends BaseTimeEntity {
     @Embedded
     private Address address;
     
+    private String profileImageUrl; // 프로필 이미지 URL
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
@@ -64,5 +65,14 @@ public class UserEntity extends BaseTimeEntity {
      */
     public void updateAddress(Address address) {
         this.address = address;
+    }
+    
+    /**
+     * 프로필 이미지 URL을 업데이트합니다.
+     * 
+     * @param profileImageUrl 새로운 프로필 이미지 URL
+     */
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }
