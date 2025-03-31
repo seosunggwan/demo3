@@ -15,12 +15,17 @@ import com.example.backend.securitylogin.entity.UserEntity;
 import com.example.backend.securitylogin.repository.UserRepository;
 import com.example.backend.securitylogin.service.oauth2.OAuthUserEntityToUserEntityService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -124,6 +129,42 @@ public class ChatService {
             dtos.add(dto);
         }
         return dtos;
+    }
+
+    // 페이지네이션을 지원하는 그룹 채팅방 목록 조회 메소드
+    public Map<String, Object> getGroupchatRooms(int page, int size) {
+        // 페이지네이션 객체 생성
+        Pageable pageable = PageRequest.of(page, size);
+        
+        // 페이지 단위로 그룹 채팅방 조회
+        Page<ChatRoom> chatRoomsPage = chatRoomRepository.findByIsGroupChat("Y", pageable);
+        
+        // DTO로 변환
+        List<ChatRoomListResDto> dtos = new ArrayList<>();
+        for (ChatRoom c : chatRoomsPage.getContent()) {
+            ChatRoomListResDto dto = ChatRoomListResDto
+                    .builder()
+                    .roomId(c.getId())
+                    .roomName(c.getName())
+                    .build();
+            dtos.add(dto);
+        }
+        
+        // 페이지 정보
+        Map<String, Object> pageInfo = new HashMap<>();
+        pageInfo.put("page", page);
+        pageInfo.put("size", size);
+        pageInfo.put("total", chatRoomsPage.getTotalElements());
+        pageInfo.put("totalPages", chatRoomsPage.getTotalPages());
+        pageInfo.put("hasNext", chatRoomsPage.hasNext());
+        pageInfo.put("hasPrevious", chatRoomsPage.hasPrevious());
+        
+        // 결과 맵
+        Map<String, Object> result = new HashMap<>();
+        result.put("rooms", dtos);
+        result.put("pageInfo", pageInfo);
+        
+        return result;
     }
 
     public void addParticipantToGroupChat(Long roomId){

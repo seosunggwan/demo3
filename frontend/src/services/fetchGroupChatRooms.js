@@ -5,11 +5,14 @@ import { redirectToLogin } from "../utils/auth";
  * 📌 그룹 채팅방 목록을 가져오는 함수 (axios 버전)
  * - GET 메서드로 요청
  * - 토큰 만료 시 자동으로 재발급 처리 (axios 인터셉터 활용)
+ * - 페이지네이션 지원 추가
  */
-const fetchGroupChatRooms = async (navigate, location) => {
+const fetchGroupChatRooms = async (page = 0, size = 10, navigate, location) => {
   try {
     // axios 인스턴스 사용 (인터셉터에서 토큰 만료 처리)
-    const response = await axiosInstance.get("/chat/room/group/list");
+    const response = await axiosInstance.get("/chat/room/group/list", {
+      params: { page, size },
+    });
 
     return response.data;
   } catch (error) {
@@ -21,7 +24,10 @@ const fetchGroupChatRooms = async (navigate, location) => {
       return null;
     }
 
-    return [];
+    return {
+      rooms: [],
+      pageInfo: { page: 0, size: 10, totalPages: 0, total: 0 },
+    };
   }
 };
 

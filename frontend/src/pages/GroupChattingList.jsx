@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import {
   Container,
   Card,
@@ -18,6 +18,8 @@ import {
   DialogTitle,
   TextField,
   CircularProgress,
+  Pagination,
+  Box,
 } from "@mui/material";
 import fetchGroupChatRooms from "../services/fetchGroupChatRooms";
 import createGroupChatRoom from "../services/createGroupChatRoom";
@@ -26,24 +28,38 @@ import joinGroupChatRoom from "../services/joinGroupChatRoom";
 const GroupChattingList = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [chatRoomList, setChatRoomList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   const [newRoomTitle, setNewRoomTitle] = useState("");
+  const [pageInfo, setPageInfo] = useState({
+    page: 0,
+    size: 10,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrevious: false,
+  });
+
+  // URL에서 페이지 파라미터 가져오기
+  const page = parseInt(searchParams.get("page") || "0");
+  const size = parseInt(searchParams.get("size") || "10");
 
   // ✅ 채팅방 목록 불러오기
   useEffect(() => {
-    loadChatRoom();
-  }, [navigate, location]);
+    loadChatRoom(page, size);
+  }, [navigate, location, page, size]);
 
-  const loadChatRoom = async () => {
+  const loadChatRoom = async (page, size) => {
     try {
       setLoading(true);
-      // 새로 만든 fetchGroupChatRooms 서비스 사용
-      const data = await fetchGroupChatRooms(navigate, location);
+      // 새로 만든 fetchGroupChatRooms 서비스 사용 (페이지네이션 파라미터 추가)
+      const data = await fetchGroupChatRooms(page, size, navigate, location);
 
-      if (data && Array.isArray(data)) {
-        setChatRoomList(data);
+      if (data && data.rooms && Array.isArray(data.rooms)) {
+        setChatRoomList(data.rooms);
+        setPageInfo(data.pageInfo);
         console.log("채팅방 목록 로드 성공:", data);
       } else {
         console.error("채팅방 목록 데이터가 잘못되었습니다.");
@@ -55,6 +71,15 @@ const GroupChattingList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 페이지 변경 시 처리
+  const handlePageChange = (event, newPage) => {
+    const newParams = {
+      page: newPage - 1,
+      size,
+    };
+    setSearchParams(newParams);
   };
 
   // ✅ 채팅방 참여하기
@@ -87,7 +112,7 @@ const GroupChattingList = () => {
       // 모달 닫고 목록 새로고침
       setNewRoomTitle("");
       setShowCreateRoomModal(false);
-      loadChatRoom();
+      loadChatRoom(page, size);
     } catch (error) {
       console.error("채팅방 생성 중 오류 발생:", error);
     }
@@ -155,6 +180,20 @@ const GroupChattingList = () => {
               </Table>
             )}
           </TableContainer>
+
+          {/* 페이지네이션 추가 */}
+          {!loading && chatRoomList.length > 0 && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+              <Pagination
+                count={pageInfo.totalPages}
+                page={pageInfo.page + 1}
+                onChange={handlePageChange}
+                color="primary"
+                showFirstButton
+                showLastButton
+              />
+            </Box>
+          )}
         </CardContent>
       </Card>
 

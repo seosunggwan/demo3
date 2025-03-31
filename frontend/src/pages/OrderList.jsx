@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLogin } from "../contexts/AuthContext";
 
 const OrderList = () => {
@@ -11,8 +11,21 @@ const OrderList = () => {
     memberName: "",
     orderStatus: null,
   });
+  const [pageInfo, setPageInfo] = useState({
+    page: 0,
+    size: 10,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrevious: false,
+  });
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isLoggedIn, getAccessToken, logout } = useLogin();
   const navigate = useNavigate();
+
+  // URL에서 페이지 파라미터 가져오기
+  const page = parseInt(searchParams.get("page") || "0");
+  const size = parseInt(searchParams.get("size") || "10");
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -21,11 +34,11 @@ const OrderList = () => {
       return;
     }
 
-    // 초기 로드시에는 검색 조건 없이 전체 주문 목록 조회
-    fetchOrders();
-  }, [isLoggedIn, navigate, getAccessToken]);
+    // URL의 페이지 정보로 주문 목록 조회
+    fetchOrders(page, size);
+  }, [isLoggedIn, navigate, getAccessToken, page, size]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (page, size) => {
     try {
       setLoading(true);
       const token = getAccessToken();
@@ -42,11 +55,16 @@ const OrderList = () => {
       console.log("검색 조건:", {
         memberName: orderSearch.memberName || "",
         orderStatus: orderSearch.orderStatus || "",
+        page: page,
+        size: size,
       });
 
-      // URL 파라미터 직접 구성
-      let url = "/api/orders/search";
-      const params = {};
+      // 페이지네이션 API 엔드포인트 사용
+      let url = "/api/orders/search/page";
+      const params = {
+        page: page,
+        size: size,
+      };
 
       // 빈 문자열이 아닌 경우에만 파라미터로 추가
       if (orderSearch.memberName && orderSearch.memberName.trim() !== "") {
@@ -69,7 +87,15 @@ const OrderList = () => {
       });
 
       console.log("응답 데이터:", response.data);
-      setOrders(Array.isArray(response.data) ? response.data : []);
+
+      // 페이지네이션 응답 형식 처리
+      if (response.data && response.data.orders) {
+        setOrders(response.data.orders);
+        setPageInfo(response.data.pageInfo);
+      } else {
+        // 기존 형식 지원 (백엔드가 배열 형태로 응답하는 경우)
+        setOrders(Array.isArray(response.data) ? response.data : []);
+      }
     } catch (error) {
       console.error("주문 목록을 불러오는데 실패했습니다:", error);
       console.error("에러 상세:", {
@@ -100,7 +126,108 @@ const OrderList = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchOrders();
+    // 검색 시 첫 페이지로 이동
+    setSearchParams({ page: 0, size: pageInfo.size });
+  };
+
+  const handlePageChange = (newPage) => {
+    // URL 파라미터 업데이트
+    setSearchParams({
+      page: newPage,
+      size: pageInfo.size,
+      ...(orderSearch.memberName && { memberName: orderSearch.memberName }),
+      ...(orderSearch.orderStatus && { orderStatus: orderSearch.orderStatus }),
+    });
+  };
+
+  // 페이지네이션 컴포넌트
+  const Pagination = () => {
+    const pageButtons = [];
+    const maxButtonCount = 5; // 표시할 최대 페이지 버튼 수
+
+    // 현재 페이지 주변 버튼만 표시하기 위한 시작/끝 계산
+    let startPage = Math.max(0, pageInfo.page - Math.floor(maxButtonCount / 2));
+    let endPage = Math.min(
+      pageInfo.totalPages - 1,
+      startPage + maxButtonCount - 1
+    );
+
+    // 최대 버튼 수에 맞게 시작 페이지 조정
+    if (endPage - startPage + 1 < maxButtonCount) {
+      startPage = Math.max(0, endPage - maxButtonCount + 1);
+    }
+
+    // 이전 페이지 버튼
+    pageButtons.push(
+      <button
+        key="prev"
+        onClick={() => handlePageChange(pageInfo.page - 1)}
+        disabled={!pageInfo.hasPrevious}
+        style={{
+          padding: "5px 10px",
+          margin: "0 5px",
+          backgroundColor: !pageInfo.hasPrevious ? "#e5e7eb" : "#f3f4f6",
+          border: "1px solid #d1d5db",
+          borderRadius: "4px",
+          cursor: pageInfo.hasPrevious ? "pointer" : "not-allowed",
+        }}
+      >
+        이전
+      </button>
+    );
+
+    // 페이지 번호 버튼들
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          style={{
+            padding: "5px 10px",
+            margin: "0 5px",
+            backgroundColor: i === pageInfo.page ? "#4F46E5" : "#f3f4f6",
+            color: i === pageInfo.page ? "white" : "black",
+            border: "1px solid #d1d5db",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    // 다음 페이지 버튼
+    pageButtons.push(
+      <button
+        key="next"
+        onClick={() => handlePageChange(pageInfo.page + 1)}
+        disabled={!pageInfo.hasNext}
+        style={{
+          padding: "5px 10px",
+          margin: "0 5px",
+          backgroundColor: !pageInfo.hasNext ? "#e5e7eb" : "#f3f4f6",
+          border: "1px solid #d1d5db",
+          borderRadius: "4px",
+          cursor: pageInfo.hasNext ? "pointer" : "not-allowed",
+        }}
+      >
+        다음
+      </button>
+    );
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "20px",
+          padding: "10px",
+        }}
+      >
+        {pageButtons}
+      </div>
+    );
   };
 
   const handleCancelOrder = async (orderId) => {
@@ -126,7 +253,7 @@ const OrderList = () => {
       );
 
       alert("주문이 취소되었습니다.");
-      fetchOrders();
+      fetchOrders(page, size);
     } catch (error) {
       console.error("주문 취소에 실패했습니다:", error);
       if (error.response?.status === 401) {
@@ -456,6 +583,9 @@ const OrderList = () => {
           </tbody>
         </table>
       </div>
+
+      {/* 페이지네이션 컴포넌트 추가 */}
+      {orders.length > 0 && <Pagination />}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useLogin } from "../contexts/AuthContext";
 import { fetchBoardDetail, deleteBoard } from "../services/boardService";
 import { decodeToken, redirectToLogin } from "../utils/auth";
-import { formatDateTime } from "../utils/dateUtils";
+import { formatDateTime, formatDateKorean } from "../utils/dateUtils";
 import {
   Container,
   Typography,
@@ -209,7 +209,8 @@ const BoardDetail = () => {
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1" color="text.secondary">
-                    작성일: {formatDateTime(board.createdTime)}
+                    작성일: {formatDateKorean(board.createdTime)}{" "}
+                    {new Date(board.createdTime).toLocaleTimeString("ko-KR")}
                   </Typography>
                 </Grid>
                 <Grid item>

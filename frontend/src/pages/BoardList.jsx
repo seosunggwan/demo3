@@ -42,7 +42,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { formatDate } from "../utils/dateUtils";
+import { formatDate, formatDateKorean } from "../utils/dateUtils";
 
 const BoardList = () => {
   const [boards, setBoards] = useState([]);
@@ -392,7 +392,7 @@ const BoardList = () => {
                     </TableCell>
                     <TableCell align="center">{board.authorName}</TableCell>
                     <TableCell align="center">
-                      {formatDate(board.createdTime)}
+                      {formatDateKorean(board.createdTime)}
                     </TableCell>
                     <TableCell align="center">{board.viewCount}</TableCell>
                     <TableCell align="center">

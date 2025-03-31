@@ -28,9 +28,10 @@ public class ChatController {
 
 //    그룹채팅목록조회
     @GetMapping("/room/group/list")
-    public ResponseEntity<?> getGroupChatRooms(){
-        List<ChatRoomListResDto> chatRooms = chatService.getGroupchatRooms();
-        return new ResponseEntity<>(chatRooms, HttpStatus.OK);
+    public ResponseEntity<?> getGroupChatRooms(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return new ResponseEntity<>(chatService.getGroupchatRooms(page, size), HttpStatus.OK);
     }
 
 //    그룹채팅방참여
