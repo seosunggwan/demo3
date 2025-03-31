@@ -32,6 +32,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import ArticleIcon from "@mui/icons-material/Article";
 
 export default function NavBar() {
   const { isLoggedIn, logout, loginUser } = useLogin();
@@ -151,6 +152,14 @@ export default function NavBar() {
                 <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary="주문" />
+            </ListItem>
+
+            {/* 게시판 메뉴 추가 */}
+            <ListItem button onClick={() => handleNavigate("/boards")}>
+              <ListItemIcon>
+                <ArticleIcon />
+              </ListItemIcon>
+              <ListItemText primary="게시판" />
             </ListItem>
 
             <Divider sx={{ my: 1 }} />
@@ -297,20 +306,29 @@ export default function NavBar() {
                   <Button
                     color="inherit"
                     component={Link}
+                    to="/items"
+                    sx={{ mx: 1 }}
+                    startIcon={<InventoryIcon />}
+                  >
+                    상품
+                  </Button>
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/boards"
+                    sx={{ mx: 1 }}
+                    startIcon={<ArticleIcon />}
+                  >
+                    게시판
+                  </Button>
+                  <Button
+                    color="inherit"
+                    component={Link}
                     to="/mychatpage"
                     sx={{ mx: 1 }}
                     startIcon={<PersonIcon />}
                   >
                     마이페이지
-                  </Button>
-                  <Button
-                    color="inherit"
-                    component={Link}
-                    to="/items"
-                    sx={{ mx: 1 }}
-                    startIcon={<InventoryIcon />}
-                  >
-                    상품 목록
                   </Button>
                   <Button
                     color="inherit"

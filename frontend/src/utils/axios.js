@@ -1,4 +1,5 @@
 import axios from "axios";
+import fetchReissue from "../services/fetchReissue";
 
 /**
  * 기본 axios 인스턴스 설정
@@ -40,7 +41,7 @@ axiosInstance.interceptors.request.use(
 );
 
 /**
- * 응답 인터셉터 - 401 에러 처리
+ * 응답 인터셉터 - 401 에러 처리 및 토큰 자동 갱신
  */
 axiosInstance.interceptors.response.use(
   (response) => {
@@ -56,30 +57,35 @@ axiosInstance.interceptors.response.use(
       console.log("에러 응답 데이터:", error.response.data);
     }
 
-    // 401 에러이고 재시도하지 않은 요청인 경우
+    // 401 에러이고 재시도하지 않은 요청인 경우 토큰 갱신 시도
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      console.log("토큰 갱신 시도 중...");
+      console.log("🔄 401 에러 발생, 토큰 갱신 시도 중...");
 
       try {
-        // 로컬 저장소에서 토큰 제거 후 로그인 페이지로 리다이렉트
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        // 토큰 갱신 시도
+        const refreshResult = await fetchReissue();
 
-        if (window.location.pathname !== "/login") {
-          // 현재 페이지 경로를 저장하고 로그인 페이지로 리다이렉트
-          const returnTo = window.location.pathname;
-          window.location.href = `/login?returnTo=${encodeURIComponent(
-            returnTo
-          )}`;
+        if (refreshResult) {
+          console.log("✅ 토큰 갱신 성공, 요청 재시도");
+
+          // 새 토큰으로 헤더 업데이트
+          const newToken = localStorage.getItem("access_token");
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+          // 원래 요청 재시도
+          return axios(originalRequest);
+        } else {
+          console.log("❌ 토큰 갱신 실패");
+          return Promise.reject(
+            new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다.")
+          );
         }
-
-        return Promise.reject(
-          new Error("인증이 만료되었습니다. 다시 로그인해주세요.")
-        );
       } catch (refreshError) {
-        console.error("인증 처리 중 오류 발생:", refreshError);
-        return Promise.reject(new Error("로그인이 필요합니다"));
+        console.error("❌ 토큰 갱신 중 오류 발생:", refreshError);
+        return Promise.reject(
+          new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다.")
+        );
       }
     }
 

@@ -16,6 +16,9 @@ import ItemList from "../pages/ItemList";
 import ItemForm from "../pages/ItemForm";
 import OrderList from "../pages/OrderList";
 import OrderForm from "../pages/OrderForm";
+import BoardList from "../pages/BoardList";
+import BoardDetail from "../pages/BoardDetail";
+import BoardForm from "../pages/BoardForm";
 import { useLogin } from "../contexts/AuthContext";
 
 export default function MyRoutes() {
@@ -50,6 +53,12 @@ export default function MyRoutes() {
         {/* 주문 관련 라우트 */}
         <Route path="/orders" element={<OrderList />} />
         <Route path="/order" element={<OrderForm />} />
+
+        {/* 게시글 관련 라우트 */}
+        <Route path="/boards" element={<BoardList />} />
+        <Route path="/boards/:id" element={<BoardDetail />} />
+        <Route path="/boards/new" element={<BoardForm />} />
+        <Route path="/boards/:id/edit" element={<BoardForm />} />
 
         {/* 404 페이지는 항상 마지막에 위치 */}
         <Route path="*" element={<NotFound />} />
