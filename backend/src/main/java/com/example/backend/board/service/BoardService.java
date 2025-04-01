@@ -45,7 +45,7 @@ public class BoardService {
         Board savedBoard = boardRepository.save(board);
         log.info("게시글 생성 완료: id={}, 제목={}, 작성자={}", savedBoard.getId(), savedBoard.getTitle(), user.getUsername());
         
-        return BoardDto.Response.fromEntity(savedBoard);
+        return BoardDto.Response.fromEntity(savedBoard, true, false);
     }
     
     /**
@@ -68,7 +68,7 @@ public class BoardService {
         Board updatedBoard = boardRepository.save(board);
         log.info("게시글 수정 완료: id={}, 제목={}", updatedBoard.getId(), updatedBoard.getTitle());
         
-        return BoardDto.Response.fromEntity(updatedBoard);
+        return BoardDto.Response.fromEntity(updatedBoard, true, false);
     }
     
     /**
@@ -102,7 +102,7 @@ public class BoardService {
         board.increaseViewCount();
         Board updatedBoard = boardRepository.save(board);
         
-        return BoardDto.Response.fromEntity(updatedBoard);
+        return BoardDto.Response.fromEntity(updatedBoard, false, false);
     }
     
     /**
@@ -113,7 +113,7 @@ public class BoardService {
         List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         
         return boards.stream()
-                .map(BoardDto.ListResponse::fromEntity)
+                .map(board -> BoardDto.ListResponse.fromEntity(board, 0))
                 .collect(Collectors.toList());
     }
     
@@ -160,5 +160,13 @@ public class BoardService {
         }
         
         return new PagedBoardsDto(boardPage);
+    }
+    
+    /**
+     * 게시글의 작성자 이름을 가져옵니다.
+     * 작성자가 없는 경우 "알 수 없음"을 반환합니다.
+     */
+    private String getAuthorName(Board board) {
+        return board.getAuthor() != null ? board.getAuthor().getUsername() : "알 수 없음";
     }
 } 

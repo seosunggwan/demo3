@@ -43,6 +43,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { formatDate, formatDateKorean } from "../utils/dateUtils";
+import PopularBoardList from "../components/PopularBoardList";
 
 const BoardList = () => {
   const [boards, setBoards] = useState([]);
@@ -285,60 +286,69 @@ const BoardList = () => {
   }
 
   return (
-    <Container>
+    <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom>
           게시판
         </Typography>
 
-        {/* 검색 폼 */}
-        <Paper component="form" onSubmit={onSearchSubmit} sx={{ p: 2, mb: 3 }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="search-type-label">검색 유형</InputLabel>
-                <Select
-                  labelId="search-type-label"
-                  value={searchType}
-                  label="검색 유형"
-                  onChange={(e) => setSearchType(e.target.value)}
+        {/* 인기글 목록 컴포넌트 추가 */}
+        <PopularBoardList />
+
+        {/* 검색 필터 영역 */}
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <Paper
+            component="form"
+            onSubmit={onSearchSubmit}
+            sx={{ p: 2, mb: 3 }}
+          >
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={2}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="search-type-label">검색 유형</InputLabel>
+                  <Select
+                    labelId="search-type-label"
+                    value={searchType}
+                    label="검색 유형"
+                    onChange={(e) => setSearchType(e.target.value)}
+                  >
+                    <MenuItem value="keyword">제목+내용</MenuItem>
+                    <MenuItem value="author">작성자</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={8}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={
+                    searchType === "keyword"
+                      ? "제목 또는 내용으로 검색"
+                      : "작성자 이름으로 검색"
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton type="submit" sx={{ p: 0.5 }}>
+                        <SearchIcon />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                  startIcon={<SearchIcon />}
                 >
-                  <MenuItem value="keyword">제목+내용</MenuItem>
-                  <MenuItem value="author">작성자</MenuItem>
-                </Select>
-              </FormControl>
+                  검색
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={8}>
-              <TextField
-                fullWidth
-                size="small"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={
-                  searchType === "keyword"
-                    ? "제목 또는 내용으로 검색"
-                    : "작성자 이름으로 검색"
-                }
-                InputProps={{
-                  endAdornment: (
-                    <IconButton type="submit" sx={{ p: 0.5 }}>
-                      <SearchIcon />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <Button
-                fullWidth
-                variant="contained"
-                type="submit"
-                startIcon={<SearchIcon />}
-              >
-                검색
-              </Button>
-            </Grid>
-          </Grid>
+          </Paper>
         </Paper>
 
         {/* 글쓰기 버튼 */}

@@ -325,3 +325,51 @@ export const getBoardLikeCount = async (boardId) => {
     throw error;
   }
 };
+
+/**
+ * 오늘의 인기글 목록 조회
+ * @returns {Promise<{date: string, boards: Array}>} - 인기글 목록
+ */
+export const fetchTodayPopularBoards = async () => {
+  try {
+    const response = await axiosInstance.get("/api/boards/popular/today");
+    return response.data;
+  } catch (error) {
+    console.error("오늘의 인기글 목록 조회 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 특정 날짜의 인기글 목록 조회
+ * @param {string} date - 날짜 (YYYY-MM-DD 형식)
+ * @returns {Promise<{date: string, boards: Array}>} - 인기글 목록
+ */
+export const fetchPopularBoardsByDate = async (date) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/boards/popular/date/${date}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("특정 날짜의 인기글 목록 조회 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 최근 N일간의 인기글 목록 조회
+ * @param {number} days - 일수 (기본값: 7)
+ * @returns {Promise<{days: number, startDate: string, endDate: string, boards: Array}>} - 인기글 목록
+ */
+export const fetchRecentPopularBoards = async (days = 7) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/boards/popular/recent?days=${days}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("최근 인기글 목록 조회 실패:", error);
+    throw error;
+  }
+};

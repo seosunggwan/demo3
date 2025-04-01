@@ -66,3 +66,32 @@ export const formatDateKorean = (dateString) => {
 
   return `${year}년 ${month}월 ${day}일`;
 };
+
+/**
+ * 날짜를 상대적인 표현으로 변환합니다.
+ * - 오늘: "오늘"
+ * - 어제: "어제"
+ * - 그 외: "N일 전"
+ *
+ * @param {string} dateStr - ISO 8601 형식의 날짜 문자열 (YYYY-MM-DD)
+ * @returns {string} 상대적인 날짜 표현
+ */
+export const formatRelativeDate = (dateStr) => {
+  const date = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const targetDate = new Date(date);
+  targetDate.setHours(0, 0, 0, 0);
+
+  const diffTime = today.getTime() - targetDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return "오늘";
+  } else if (diffDays === 1) {
+    return "어제";
+  } else {
+    return `${diffDays}일 전`;
+  }
+};

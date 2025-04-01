@@ -19,7 +19,7 @@ public class PagedBoardsDto {
     
     public PagedBoardsDto(Page<Board> boardPage) {
         this.boards = boardPage.getContent().stream()
-                .map(BoardDto.ListResponse::fromEntity)
+                .map(board -> BoardDto.ListResponse.fromEntity(board, 0))
                 .collect(Collectors.toList());
         
         this.pageInfo = new PageInfo(

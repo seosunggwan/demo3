@@ -21,6 +21,7 @@ import BoardDetail from "../pages/BoardDetail";
 import BoardForm from "../pages/BoardForm";
 import Profile from "../pages/Profile";
 import { useLogin } from "../contexts/AuthContext";
+import PopularBoards from "../components/PopularBoards";
 
 export default function MyRoutes() {
   const { isLoggedIn } = useLogin();
@@ -62,6 +63,7 @@ export default function MyRoutes() {
 
         {/* 게시글 관련 라우트 */}
         <Route path="/boards" element={<BoardList />} />
+        <Route path="/boards/popular" element={<PopularBoards />} />
         <Route path="/boards/:id" element={<BoardDetail />} />
         <Route path="/boards/new" element={<BoardForm />} />
         <Route path="/boards/:id/edit" element={<BoardForm />} />

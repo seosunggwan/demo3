@@ -69,4 +69,12 @@ public class Board extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
+
+    /**
+     * 작성자 이름을 반환하는 메서드
+     * 작성자가 없는 경우 "알 수 없음"을 반환
+     */
+    public String getAuthorName() {
+        return author != null ? author.getUsername() : "알 수 없음";
+    }
 } 
