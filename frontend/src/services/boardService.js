@@ -276,3 +276,52 @@ export const deleteBoard = async (boardId, navigate, location) => {
     throw error;
   }
 };
+
+/**
+ * 게시글 좋아요 토글 (좋아요 추가 또는 삭제)
+ * @param {number} boardId - 게시글 ID
+ * @returns {Promise<{liked: boolean, likeCount: number}>} - 좋아요 상태와 개수
+ */
+export const toggleBoardLike = async (boardId) => {
+  try {
+    const response = await axiosInstance.post(`/api/boards/${boardId}/likes`);
+    return response.data;
+  } catch (error) {
+    console.error("게시글 좋아요 토글 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 게시글 좋아요 상태 조회
+ * @param {number} boardId - 게시글 ID
+ * @returns {Promise<{liked: boolean, likeCount: number}>} - 좋아요 상태와 개수
+ */
+export const getBoardLikeStatus = async (boardId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/boards/${boardId}/likes/status`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("게시글 좋아요 상태 조회 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 게시글 좋아요 개수 조회
+ * @param {number} boardId - 게시글 ID
+ * @returns {Promise<{likeCount: number}>} - 좋아요 개수
+ */
+export const getBoardLikeCount = async (boardId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/boards/${boardId}/likes/count`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("게시글 좋아요 개수 조회 실패:", error);
+    throw error;
+  }
+};

@@ -3,6 +3,32 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useLogin } from "../contexts/AuthContext";
 import axiosInstance from "../utils/axios";
 import { decodeToken, redirectToLogin } from "../utils/auth";
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  InputAdornment,
+  Paper,
+  IconButton,
+  Fade,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Divider,
+  CircularProgress,
+  Pagination as MuiPagination,
+  Alert,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 
 const ItemList = () => {
   const [items, setItems] = useState([]);
@@ -180,96 +206,6 @@ const ItemList = () => {
     setSearchParams({ page: 0, size });
   };
 
-  // 페이지네이션 컴포넌트
-  const Pagination = () => {
-    const pageButtons = [];
-    const maxButtonCount = 5; // 표시할 최대 페이지 버튼 수
-
-    // 현재 페이지 주변 버튼만 표시하기 위한 시작/끝 계산
-    let startPage = Math.max(0, pageInfo.page - Math.floor(maxButtonCount / 2));
-    let endPage = Math.min(
-      pageInfo.totalPages - 1,
-      startPage + maxButtonCount - 1
-    );
-
-    // 최대 버튼 수에 맞게 시작 페이지 조정
-    if (endPage - startPage + 1 < maxButtonCount) {
-      startPage = Math.max(0, endPage - maxButtonCount + 1);
-    }
-
-    // 이전 페이지 버튼
-    pageButtons.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(pageInfo.page - 1)}
-        disabled={!pageInfo.hasPrevious}
-        style={{
-          padding: "5px 10px",
-          margin: "0 5px",
-          backgroundColor: !pageInfo.hasPrevious ? "#e5e7eb" : "#f3f4f6",
-          border: "1px solid #d1d5db",
-          borderRadius: "4px",
-          cursor: pageInfo.hasPrevious ? "pointer" : "not-allowed",
-        }}
-      >
-        이전
-      </button>
-    );
-
-    // 페이지 번호 버튼들
-    for (let i = startPage; i <= endPage; i++) {
-      pageButtons.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          style={{
-            padding: "5px 10px",
-            margin: "0 5px",
-            backgroundColor: i === pageInfo.page ? "#4F46E5" : "#f3f4f6",
-            color: i === pageInfo.page ? "white" : "black",
-            border: "1px solid #d1d5db",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          {i + 1}
-        </button>
-      );
-    }
-
-    // 다음 페이지 버튼
-    pageButtons.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(pageInfo.page + 1)}
-        disabled={!pageInfo.hasNext}
-        style={{
-          padding: "5px 10px",
-          margin: "0 5px",
-          backgroundColor: !pageInfo.hasNext ? "#e5e7eb" : "#f3f4f6",
-          border: "1px solid #d1d5db",
-          borderRadius: "4px",
-          cursor: pageInfo.hasNext ? "pointer" : "not-allowed",
-        }}
-      >
-        다음
-      </button>
-    );
-
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "20px",
-          padding: "10px",
-        }}
-      >
-        {pageButtons}
-      </div>
-    );
-  };
-
   const handleDelete = async (id) => {
     if (!isAuthenticated) {
       redirectToLogin(navigate, "/items");
@@ -323,247 +259,350 @@ const ItemList = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>로딩 중...</div>
+      <Container sx={{ py: 8, textAlign: "center" }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ mt: 3 }}>
+          상품 목록을 불러오는 중...
+        </Typography>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>다시 시도</button>
-      </div>
+      <Container sx={{ py: 8 }}>
+        <Paper
+          elevation={2}
+          sx={{
+            p: 4,
+            textAlign: "center",
+            borderRadius: 2,
+            backgroundColor: "error.lighter",
+          }}
+        >
+          <Typography variant="h6" color="error" gutterBottom>
+            {error}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => window.location.reload()}
+            sx={{ mt: 2 }}
+          >
+            다시 시도
+          </Button>
+        </Paper>
+      </Container>
     );
   }
 
   return (
-    <Suspense fallback={<div>로딩 중...</div>}>
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
-        <div
-          style={{
+    <Suspense
+      fallback={
+        <Container sx={{ py: 8, textAlign: "center" }}>
+          <CircularProgress size={60} />
+        </Container>
+      }
+    >
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box
+          sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "20px",
+            mb: 4,
           }}
         >
-          <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>상품 목록</h1>
-          <Link
+          <Typography variant="h4" component="h1" fontWeight="bold">
+            상품 목록
+          </Typography>
+          <Button
+            component={Link}
             to="/items/new"
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#4F46E5",
-              color: "white",
-              textDecoration: "none",
-              borderRadius: "4px",
-            }}
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{ borderRadius: 1.5, textTransform: "none" }}
           >
             상품 등록
-          </Link>
-        </div>
+          </Button>
+        </Box>
 
         {/* 검색 폼 추가 */}
-        <div className="mb-6">
-          <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              placeholder="상품명으로 검색"
-              className="flex-1 p-2 border border-gray-300 rounded"
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-            >
-              검색
-            </button>
-            {keyword && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded"
-              >
-                초기화
-              </button>
-            )}
-          </form>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: "16px",
+        <Paper
+          elevation={1}
+          sx={{
+            p: 2,
+            mb: 4,
+            borderRadius: 2,
+            transition: "all 0.3s ease",
+            "&:hover": {
+              boxShadow: 3,
+            },
           }}
         >
-          {Array.isArray(items) && items.length > 0 ? (
-            items.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  cursor: "pointer",
-                  overflow: "hidden",
-                }}
-                onClick={() => navigate(`/items/${item.id}/edit`)}
-              >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    paddingBottom: "75%", // 4:3 비율
-                    marginBottom: "12px",
-                    backgroundColor: "#f5f5f5",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                  }}
-                >
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src =
-                          "https://via.placeholder.com/150?text=No+Image";
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#9ca3af",
-                        fontSize: "14px",
-                      }}
-                    >
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
-
-                <h2
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {item.name}
-                </h2>
-
-                <div style={{ marginBottom: "16px", flex: 1 }}>
-                  <div style={{ marginBottom: "4px", color: "#374151" }}>
-                    가격: {item.price.toLocaleString()}원
-                  </div>
-                  <div
-                    style={{
-                      color: item.stockQuantity > 0 ? "#374151" : "#ef4444",
-                    }}
-                  >
-                    재고: {item.stockQuantity}개
-                    {item.stockQuantity === 0 && " (품절)"}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    marginTop: "auto",
-                  }}
-                  onClick={(e) => e.stopPropagation()} // 버튼 클릭 시 상위 요소의 onClick 방지
-                >
-                  <Link
-                    to={`/items/${item.id}/edit`}
-                    style={{
-                      padding: "6px 12px",
-                      backgroundColor: "#E5E7EB",
-                      color: "#374151",
-                      textDecoration: "none",
-                      borderRadius: "4px",
-                      fontSize: "14px",
-                      textAlign: "center",
-                      flex: 1,
-                    }}
-                  >
-                    수정
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    style={{
-                      padding: "6px 12px",
-                      backgroundColor: "#fee2e2",
-                      color: "#b91c1c",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      flex: 1,
-                    }}
-                  >
-                    삭제
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div
-              style={{
-                padding: "32px",
-                textAlign: "center",
-                backgroundColor: "#f9fafb",
-                borderRadius: "8px",
-                gridColumn: "1 / -1",
+          <form onSubmit={handleSearch}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="medium"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="상품명을 입력하세요"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: searchKeyword && (
+                  <InputAdornment position="end">
+                    <Fade in={Boolean(searchKeyword)}>
+                      <IconButton
+                        aria-label="clear search"
+                        onClick={() => setSearchKeyword("")}
+                        edge="end"
+                        size="small"
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    </Fade>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  transition: "all 0.3s ease",
+                },
+                "& .MuiOutlinedInput-root.Mui-focused": {
+                  borderColor: "primary.main",
+                },
+              }}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                mt: 1.5,
+                justifyContent: "flex-end",
               }}
             >
-              <p style={{ marginBottom: "16px", color: "#4b5563" }}>
-                등록된 상품이 없습니다.
-              </p>
-              <Link
-                to="/items/new"
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#4F46E5",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "4px",
-                  display: "inline-block",
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                startIcon={<SearchIcon />}
+                sx={{
+                  minWidth: "100px",
+                  borderRadius: 1.5,
+                  textTransform: "none",
                 }}
               >
-                상품 등록하기
-              </Link>
-            </div>
-          )}
-        </div>
+                검색
+              </Button>
+              {keyword && (
+                <Button
+                  onClick={handleClearSearch}
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    minWidth: "100px",
+                    borderRadius: 1.5,
+                    textTransform: "none",
+                  }}
+                >
+                  검색 초기화
+                </Button>
+              )}
+            </Box>
+          </form>
+        </Paper>
 
-        {pageInfo.totalPages > 1 && <Pagination />}
-      </div>
+        {keyword && (
+          <Box sx={{ mb: 3 }}>
+            <Alert
+              severity="info"
+              sx={{ borderRadius: 2 }}
+              action={
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={handleClearSearch}
+                >
+                  모든 상품 보기
+                </Button>
+              }
+            >
+              <Typography variant="body2">
+                '{keyword}' 검색 결과: 총 {pageInfo.total}개의 상품
+              </Typography>
+            </Alert>
+          </Box>
+        )}
+
+        {/* 상품 목록 */}
+        <Grid container spacing={3}>
+          {Array.isArray(items) && items.length > 0 ? (
+            items.map((item) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    "&:hover": {
+                      transform: "translateY(-4px)",
+                      boxShadow: 4,
+                    },
+                    borderRadius: 2,
+                    overflow: "hidden",
+                  }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      pt: "75%", // 4:3 비율
+                      position: "relative",
+                      backgroundColor: "grey.100",
+                    }}
+                  >
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://via.placeholder.com/150?text=No+Image";
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "text.secondary",
+                        }}
+                      >
+                        <NoPhotographyIcon sx={{ fontSize: 40 }} />
+                      </Box>
+                    )}
+                  </CardMedia>
+
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      noWrap
+                      gutterBottom
+                      fontWeight="bold"
+                    >
+                      {item.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      가격: {item.price.toLocaleString()}원
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color={item.stockQuantity > 0 ? "text.primary" : "error"}
+                    >
+                      재고: {item.stockQuantity}개
+                      {item.stockQuantity === 0 && " (품절)"}
+                    </Typography>
+                  </CardContent>
+
+                  <Divider />
+
+                  <CardActions sx={{ p: 1.5, justifyContent: "space-between" }}>
+                    <Button
+                      component={Link}
+                      to={`/items/${item.id}/edit`}
+                      size="small"
+                      startIcon={<EditIcon />}
+                      sx={{ textTransform: "none" }}
+                    >
+                      수정
+                    </Button>
+                    <Button
+                      size="small"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDelete(item.id);
+                      }}
+                      sx={{ textTransform: "none" }}
+                    >
+                      삭제
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 4,
+                  textAlign: "center",
+                  borderRadius: 2,
+                  backgroundColor: "grey.50",
+                }}
+              >
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  등록된 상품이 없습니다.
+                </Typography>
+                <Button
+                  component={Link}
+                  to="/items/new"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  sx={{ mt: 2, borderRadius: 1.5, textTransform: "none" }}
+                >
+                  상품 등록하기
+                </Button>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+
+        {/* 페이지네이션 */}
+        {pageInfo.totalPages > 1 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
+            <MuiPagination
+              count={pageInfo.totalPages}
+              page={pageInfo.page + 1}
+              onChange={(event, page) => handlePageChange(page - 1)}
+              color="primary"
+              showFirstButton
+              showLastButton
+              siblingCount={1}
+            />
+          </Box>
+        )}
+      </Container>
     </Suspense>
   );
 };

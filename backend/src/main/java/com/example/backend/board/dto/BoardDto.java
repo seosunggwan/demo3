@@ -58,6 +58,7 @@ public class BoardDto {
         private String authorName;
         private Long authorId;
         private int viewCount;
+        private int likeCount;
         private LocalDateTime createdTime;
         private LocalDateTime updatedTime;
         
@@ -72,6 +73,7 @@ public class BoardDto {
                     .authorName(board.getAuthor().getUsername())
                     .authorId(board.getAuthor().getId())
                     .viewCount(board.getViewCount())
+                    .likeCount(board.getLikeCount())
                     .createdTime(board.getCreatedTime())
                     .updatedTime(board.getUpdatedTime())
                     .build();
@@ -90,6 +92,7 @@ public class BoardDto {
         private String title;
         private String authorName;
         private int viewCount;
+        private int likeCount;
         private LocalDateTime createdTime;
         
         /**
@@ -101,6 +104,7 @@ public class BoardDto {
                     .title(board.getTitle())
                     .authorName(board.getAuthor().getUsername())
                     .viewCount(board.getViewCount())
+                    .likeCount(board.getLikeCount())
                     .createdTime(board.getCreatedTime())
                     .build();
         }

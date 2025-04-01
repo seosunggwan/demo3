@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useLogin } from "../contexts/AuthContext";
-import { fetchBoardDetail, deleteBoard } from "../services/boardService";
+import {
+  fetchBoardDetail,
+  deleteBoard,
+  toggleBoardLike,
+  getBoardLikeStatus,
+} from "../services/boardService";
 import { decodeToken, redirectToLogin } from "../utils/auth";
 import { formatDateTime, formatDateKorean } from "../utils/dateUtils";
+import CommentList from "../components/CommentList";
 import {
   Container,
   Typography,
@@ -21,11 +27,15 @@ import {
   DialogTitle,
   Snackbar,
   Alert,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 
 const BoardDetail = () => {
   const { id } = useParams();
@@ -37,6 +47,7 @@ const BoardDetail = () => {
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
   });
@@ -68,6 +79,7 @@ const BoardDetail = () => {
 
         setIsAuthenticated(true);
         await loadBoardData();
+        await loadLikeStatus();
       } catch (error) {
         console.error("인증 확인 중 오류 발생:", error);
         setError("게시글을 불러오는데 실패했습니다.");
@@ -102,6 +114,65 @@ const BoardDetail = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 좋아요 상태 로드
+  const loadLikeStatus = async () => {
+    try {
+      const response = await getBoardLikeStatus(id);
+      setIsLiked(response.liked);
+
+      // board 상태가 이미 설정되어 있다면 좋아요 상태 업데이트
+      setBoard((prevBoard) => {
+        if (prevBoard) {
+          return {
+            ...prevBoard,
+            likeCount: response.likeCount,
+            isLiked: response.liked,
+          };
+        }
+        return prevBoard;
+      });
+    } catch (error) {
+      console.error("좋아요 상태 조회 실패:", error);
+      // 에러가 발생해도 게시글 표시에 영향을 주지 않도록 조용히 처리
+    }
+  };
+
+  // 좋아요 토글 처리
+  const handleLikeToggle = async () => {
+    if (!isAuthenticated) {
+      redirectToLogin(navigate, `/boards/${id}`);
+      return;
+    }
+
+    try {
+      const response = await toggleBoardLike(id);
+      setIsLiked(response.liked);
+
+      // board 상태 업데이트
+      setBoard((prevBoard) => ({
+        ...prevBoard,
+        likeCount: response.likeCount,
+        isLiked: response.liked,
+      }));
+
+      // 스낵바로 결과 알림
+      setSnackbar({
+        open: true,
+        message: response.liked
+          ? "게시글을 좋아합니다."
+          : "좋아요를 취소했습니다.",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("좋아요 토글 실패:", error);
+      setSnackbar({
+        open: true,
+        message: "좋아요 처리 중 오류가 발생했습니다.",
+        severity: "error",
+      });
     }
   };
 
@@ -221,6 +292,22 @@ const BoardDetail = () => {
                     variant="outlined"
                   />
                 </Grid>
+                <Grid item>
+                  <Chip
+                    icon={
+                      isLiked ? (
+                        <ThumbUpIcon fontSize="small" />
+                      ) : (
+                        <ThumbUpOutlinedIcon fontSize="small" />
+                      )
+                    }
+                    label={`좋아요: ${board.likeCount || 0}`}
+                    size="small"
+                    variant="outlined"
+                    color={isLiked ? "primary" : "default"}
+                    onClick={handleLikeToggle}
+                  />
+                </Grid>
               </Grid>
             </Box>
 
@@ -293,6 +380,9 @@ const BoardDetail = () => {
                 )}
               </Box>
             </Box>
+
+            {/* 댓글 목록 컴포넌트 추가 */}
+            <CommentList boardId={Number(id)} />
           </>
         )}
       </Paper>

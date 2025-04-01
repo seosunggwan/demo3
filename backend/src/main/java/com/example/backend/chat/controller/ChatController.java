@@ -1,8 +1,6 @@
 package com.example.backend.chat.controller;
 
 import com.example.backend.chat.dto.ChatMessageDto;
-import com.example.backend.chat.dto.ChatRoomListResDto;
-import com.example.backend.chat.dto.MyChatListResDto;
 import com.example.backend.chat.service.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

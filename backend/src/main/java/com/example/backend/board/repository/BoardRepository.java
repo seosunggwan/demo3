@@ -36,7 +36,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByTitleOrContentContaining(@Param("keyword") String keyword, Pageable pageable);
     
     /**
-     * 작성자 이름으로 게시글 목록 조회 (페이징)
+     * 작성자 이름에 키워드가 포함된 게시글 목록 조회 (페이징)
      */
-    Page<Board> findByAuthor_UsernameContaining(String username, Pageable pageable);
+    Page<Board> findByAuthor_UsernameContaining(String authorName, Pageable pageable);
 } 

@@ -1,8 +1,6 @@
 package com.example.backend.securitylogin.controller;
 
 import com.example.backend.securitylogin.dto.UserProfileDto;
-import com.example.backend.securitylogin.entity.UserEntity;
-import com.example.backend.securitylogin.repository.UserRepository;
 import com.example.backend.securitylogin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
