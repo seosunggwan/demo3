@@ -173,17 +173,17 @@ const PopularBoardList = () => {
                 }}
               >
                 <Chip
-                  label={board.rank}
-                  color={board.rank <= 3 ? "primary" : "default"}
+                  label={index + 1}
+                  color={index + 1 <= 3 ? "primary" : "default"}
                   size="small"
                   sx={{
                     fontWeight: "bold",
                     backgroundColor:
-                      board.rank === 1
+                      index + 1 === 1
                         ? "gold"
-                        : board.rank === 2
+                        : index + 1 === 2
                         ? "silver"
-                        : board.rank === 3
+                        : index + 1 === 3
                         ? "#cd7f32"
                         : "default",
                   }}
@@ -192,88 +192,26 @@ const PopularBoardList = () => {
 
               <ListItemText
                 primary={
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography
-                      component="span"
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: "medium",
-                        mr: 1,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {board.title}
-                    </Typography>
-
-                    {tabValue > 0 && (
-                      <Chip
-                        label={formatRelativeDate(board.selectionDate)}
-                        size="small"
-                        sx={{ ml: 1 }}
-                        variant="outlined"
-                      />
-                    )}
-                  </Box>
+                  <Typography variant="subtitle1" component="div">
+                    {board.title}
+                  </Typography>
                 }
                 secondary={
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                      sx={{ mr: 2 }}
-                    >
-                      {board.authorName}
-                    </Typography>
-
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Visibility
-                          fontSize="small"
-                          sx={{
-                            mr: 0.5,
-                            color: "text.secondary",
-                            fontSize: "0.875rem",
-                          }}
-                        />
-                        <Typography variant="body2" color="text.secondary">
-                          {board.viewCount}
-                        </Typography>
-                      </Box>
-
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <ThumbUp
-                          fontSize="small"
-                          sx={{
-                            mr: 0.5,
-                            color: "text.secondary",
-                            fontSize: "0.875rem",
-                          }}
-                        />
-                        <Typography variant="body2" color="text.secondary">
-                          {board.likeCount}
-                        </Typography>
-                      </Box>
-
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Comment
-                          fontSize="small"
-                          sx={{
-                            mr: 0.5,
-                            color: "text.secondary",
-                            fontSize: "0.875rem",
-                          }}
-                        />
-                        <Typography variant="body2" color="text.secondary">
-                          {board.commentCount}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Visibility
+                      fontSize="small"
+                      sx={{
+                        mr: 0.5,
+                        color: "text.secondary",
+                        fontSize: "0.875rem",
+                      }}
+                    />
+                    {board.viewCount}
+                  </Typography>
                 }
               />
             </ListItem>

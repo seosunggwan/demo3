@@ -402,7 +402,21 @@ const BoardList = () => {
                     </TableCell>
                     <TableCell align="center">{board.authorName}</TableCell>
                     <TableCell align="center">
-                      {formatDateKorean(board.createdTime)}
+                      {board.createdTime
+                        ? new Date(
+                            board.createdTime[0],
+                            board.createdTime[1] - 1, // 월은 0부터 시작하므로 1을 빼줍니다
+                            board.createdTime[2],
+                            board.createdTime[3],
+                            board.createdTime[4]
+                          ).toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "날짜 없음"}
                     </TableCell>
                     <TableCell align="center">{board.viewCount}</TableCell>
                     <TableCell align="center">

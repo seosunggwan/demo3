@@ -74,6 +74,7 @@ export const fetchBoardsWithPaging = async (
     const response = await axiosInstance.get(
       `/api/boards/page?page=${page}&size=${size}`
     );
+    console.log("Board list response:", response.data);
     return response.data;
   } catch (error) {
     console.error("게시글 목록 조회 중 오류 발생:", error);

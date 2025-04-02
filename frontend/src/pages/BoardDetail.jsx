@@ -280,8 +280,22 @@ const BoardDetail = () => {
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1" color="text.secondary">
-                    작성일: {formatDateKorean(board.createdTime)}{" "}
-                    {new Date(board.createdTime).toLocaleTimeString("ko-KR")}
+                    작성일:{" "}
+                    {board.createdTime
+                      ? new Date(
+                          board.createdTime[0],
+                          board.createdTime[1] - 1,
+                          board.createdTime[2],
+                          board.createdTime[3],
+                          board.createdTime[4]
+                        ).toLocaleDateString("ko-KR", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "날짜 없음"}
                   </Typography>
                 </Grid>
                 <Grid item>

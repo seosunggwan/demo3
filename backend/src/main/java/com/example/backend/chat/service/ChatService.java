@@ -85,6 +85,9 @@ public class ChatService {
                 .content(chatMessageReqDto.getMessage())
                 .build();
         chatMessageRepository.save(chatMessage);
+        
+        // updateTime을 DTO에 설정
+        chatMessageReqDto.setUpdateTime(chatMessage.getUpdatedTime().toString());
 //        사용자별로 읽음여부 저장
         List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
         for(ChatParticipant c : chatParticipants){
@@ -289,6 +292,7 @@ public class ChatService {
             ChatMessageDto chatMessageDto = ChatMessageDto.builder()
                     .message(c.getContent())
                     .senderEmail(c.getMember().getEmail())
+                    .updateTime(c.getUpdatedTime().toString())
                     .build();
             chatMessageDtos.add(chatMessageDto);
         }

@@ -55,7 +55,10 @@ export default function ChatPage() {
         console.log("🟢 STOMP 웹소켓 연결 성공");
         setStatus("connected");
         client.subscribe("/topic/1", (message) => {
-          setMessages((prev) => [...prev, JSON.parse(message.body)]);
+          const receivedMessage = JSON.parse(message.body);
+          console.log("받은 메시지 전체 데이터:", receivedMessage);
+          console.log("메시지 시간:", receivedMessage.updateTime);
+          setMessages((prev) => [...prev, receivedMessage]);
           scrollToBottom();
         });
       },
@@ -101,8 +104,19 @@ export default function ChatPage() {
 
   const renderMessageItem = (msg, idx) => {
     const isCurrentUser = msg.senderEmail === currentUser;
+    console.log(`메시지 ${idx} 데이터:`, {
+      content: msg.message,
+      sender: msg.senderEmail,
+      time: msg.updateTime,
+    });
+    const messageTime = msg.updateTime
+      ? new Date(msg.updateTime).toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "";
 
-  return (
+    return (
       <Box
         key={idx}
         sx={{
@@ -144,9 +158,27 @@ export default function ChatPage() {
               color: isCurrentUser ? "white" : "text.primary",
             }}
           >
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {msg.message}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
+              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+                {msg.message}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: isCurrentUser
+                    ? "rgba(255, 255, 255, 0.7)"
+                    : "text.secondary",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {msg.updateTime
+                  ? new Date(msg.updateTime).toLocaleTimeString("ko-KR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : ""}
+              </Typography>
+            </Box>
           </Paper>
         </Box>
       </Box>
@@ -252,28 +284,28 @@ export default function ChatPage() {
           <Box sx={{ p: 2, bgcolor: "background.paper" }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item xs={10}>
-          <TextField
-            fullWidth
-            variant="outlined"
+                <TextField
+                  fullWidth
+                  variant="outlined"
                   size="small"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="메시지를 입력하세요"
                   onKeyPress={handleKeyPress}
                   disabled={status !== "connected"}
-          />
+                />
               </Grid>
               <Grid item xs={2}>
-          <Button
+                <Button
                   fullWidth
-            variant="contained"
-            color="primary"
-            onClick={sendMessage}
+                  variant="contained"
+                  color="primary"
+                  onClick={sendMessage}
                   disabled={status !== "connected" || !newMessage.trim()}
                   endIcon={<SendIcon />}
-          >
+                >
                   전송
-          </Button>
+                </Button>
               </Grid>
             </Grid>
           </Box>
