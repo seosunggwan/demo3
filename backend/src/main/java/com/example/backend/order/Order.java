@@ -2,7 +2,7 @@ package com.example.backend.order;
 
 import com.example.backend.delivery.Delivery;
 import com.example.backend.delivery.DeliveryStatus;
-import com.example.backend.securitylogin.entity.UserEntity;
+import com.example.backend.security.entity.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

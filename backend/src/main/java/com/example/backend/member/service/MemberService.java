@@ -1,9 +1,9 @@
 package com.example.backend.member.service;
 
-import com.example.backend.securitylogin.entity.UserEntity;
+import com.example.backend.security.entity.UserEntity;
 import com.example.backend.member.dto.MemberListResDto;
 import com.example.backend.member.dto.PagedMembersDto;
-import com.example.backend.securitylogin.repository.UserRepository;
+import com.example.backend.security.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

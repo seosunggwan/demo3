@@ -1,7 +1,7 @@
 package com.example.backend.delivery;
 
 import com.example.backend.order.Order;
-import com.example.backend.securitylogin.entity.Address;
+import com.example.backend.security.entity.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;

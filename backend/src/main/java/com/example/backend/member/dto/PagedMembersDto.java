@@ -1,6 +1,6 @@
 package com.example.backend.member.dto;
 
-import com.example.backend.securitylogin.entity.UserEntity;
+import com.example.backend.security.entity.UserEntity;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 

@@ -1,7 +1,7 @@
 package com.example.backend.chat.domain;
 
 import com.example.backend.common.domain.BaseTimeEntity;
-import com.example.backend.securitylogin.entity.UserEntity;
+import com.example.backend.security.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,7 +2,7 @@ package com.example.backend.board.repository;
 
 import com.example.backend.board.entity.Board;
 import com.example.backend.board.entity.BoardLike;
-import com.example.backend.securitylogin.entity.UserEntity;
+import com.example.backend.security.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
