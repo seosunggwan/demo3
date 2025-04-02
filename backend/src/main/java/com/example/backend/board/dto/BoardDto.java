@@ -3,7 +3,6 @@ package com.example.backend.board.dto;
 import java.time.LocalDateTime;
 
 import com.example.backend.board.entity.Board;
-import com.example.backend.securitylogin.entity.UserEntity;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

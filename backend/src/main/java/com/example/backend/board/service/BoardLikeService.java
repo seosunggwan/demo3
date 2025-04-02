@@ -73,10 +73,6 @@ public class BoardLikeService {
      */
     @Transactional(readOnly = true)
     public boolean isLiked(Long boardId, String email) {
-        // 게시글 조회
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + boardId));
-        
         // 사용자 조회
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));

@@ -166,6 +166,7 @@ public class BoardService {
      * 게시글의 작성자 이름을 가져옵니다.
      * 작성자가 없는 경우 "알 수 없음"을 반환합니다.
      */
+    @SuppressWarnings("unused")
     private String getAuthorName(Board board) {
         return board.getAuthor() != null ? board.getAuthor().getUsername() : "알 수 없음";
     }

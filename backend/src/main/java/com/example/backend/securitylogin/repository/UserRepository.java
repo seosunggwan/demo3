@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
+import org.springframework.lang.NonNull;
 
 /**
  * 📌 일반 사용자 정보를 관리하는 JPA Repository
@@ -29,7 +30,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByUsername(String username);
     
     // 페이지네이션과 검색을 위한 메소드 추가
-    Page<UserEntity> findAll(Pageable pageable);
+    @NonNull
+    Page<UserEntity> findAll(@NonNull Pageable pageable);
     
     // 이름으로 검색 (contains)
     Page<UserEntity> findByUsernameContaining(String username, Pageable pageable);
