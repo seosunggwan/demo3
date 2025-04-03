@@ -10,6 +10,7 @@ import com.example.backend.security.service.RefreshTokenService;
 import com.example.backend.security.service.form.CustomUserDetailsService;
 import com.example.backend.security.service.oauth2.CustomOAuth2UserService;
 import com.example.backend.security.service.oauth2.OAuthUserEntityToUserEntityService;
+import com.example.backend.security.constant.TokenConstants;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -121,7 +122,8 @@ public class SecurityConfig {
                         "/publish/**",
                         "/health",
                         "/api/items/image",
-                        "/api/auth/refresh"
+                        "/api/auth/refresh",
+                        TokenConstants.TOKEN_REISSUE_PATH
                     ).permitAll()
                     .requestMatchers("/admin").hasAuthority("ADMIN")
                     .anyRequest().authenticated()

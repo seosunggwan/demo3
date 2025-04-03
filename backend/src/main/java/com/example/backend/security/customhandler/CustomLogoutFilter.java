@@ -3,6 +3,7 @@ package com.example.backend.security.customhandler;
 import com.example.backend.security.jwt.JWTUtil;
 import com.example.backend.security.repository.RefreshRepository;
 import com.example.backend.security.util.CookieUtil;
+import com.example.backend.security.constant.TokenConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -13,20 +14,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * 📌 Redis 기반 로그아웃 필터
- * - Refresh Token 만료 및 삭제
- * - Redis에서 Refresh Token 관리
- */
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
-    private final RefreshRepository refreshRepository; // Redis 기반 Repository
+    private final RefreshRepository refreshRepository;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -53,8 +48,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
+        // 쿠키 이름을 TokenConstants를 사용하여 통일
         String refresh = Arrays.stream(cookies)
-                .filter(cookie -> "refresh".equals(cookie.getName()))
+                .filter(cookie -> TokenConstants.REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
@@ -65,29 +61,26 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         String category = jwtUtil.getCategory(refresh);
-        if (category == null || !category.equals("refresh")) {
+        if (category == null || !category.equals(TokenConstants.REFRESH_TOKEN_CATEGORY)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        // 🔹 Redis에서 Refresh Token 존재 여부 확인
         boolean isExist = refreshRepository.existsById(refresh);
         if (!isExist) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        // 🔥 Redis Key를 맞춰서 삭제
-        String redisKey = "refreshToken:" + refresh;
+        String redisKey = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + refresh;
         System.out.println("Deleting refresh token: " + redisKey);
         refreshRepository.deleteById(redisKey);
         System.out.println("Refresh token deleted.");
 
-        // 🔹 쿠키에서 Refresh Token 삭제
-        Cookie cookie = CookieUtil.createCookie("refresh", null, 0);
+        // 쿠키 이름을 TokenConstants를 사용하여 생성
+        Cookie cookie = CookieUtil.createCookie(TokenConstants.REFRESH_TOKEN_COOKIE_NAME, null, 0);
         response.addCookie(cookie);
 
-        // 🔹 SecurityContext 초기화 (로그아웃 처리)
         SecurityContextHolder.clearContext();
 
         response.setStatus(HttpServletResponse.SC_OK);
