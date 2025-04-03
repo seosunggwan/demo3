@@ -90,7 +90,7 @@ public class SecurityConfig {
                         .logoutUrl("/auth/logout")
                         .clearAuthentication(true)
                         .invalidateHttpSession(true)
-                        .deleteCookies("refresh_token")
+                        .deleteCookies(TokenConstants.REFRESH_TOKEN_COOKIE_NAME)
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.getWriter().write("Logged out successfully");
@@ -123,7 +123,8 @@ public class SecurityConfig {
                         "/health",
                         "/api/items/image",
                         "/api/auth/refresh",
-                        TokenConstants.TOKEN_REISSUE_PATH
+                        TokenConstants.TOKEN_REISSUE_PATH,
+                        "/auth/logout"
                     ).permitAll()
                     .requestMatchers("/admin").hasAuthority("ADMIN")
                     .anyRequest().authenticated()
@@ -139,7 +140,6 @@ public class SecurityConfig {
 
         http    
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
 
         http
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);

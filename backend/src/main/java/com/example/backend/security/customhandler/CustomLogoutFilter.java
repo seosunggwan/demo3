@@ -32,57 +32,35 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        if (!requestURI.matches("^\\/logout$")) {
+        if (!requestURI.matches("^\\/auth\\/logout$")) {
             chain.doFilter(request, response);
             return;
         }
 
-        if (!("POST".equals(requestMethod) || "DELETE".equals(requestMethod))) {
+        if (!"POST".equals(requestMethod)) {
             chain.doFilter(request, response);
             return;
         }
 
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(TokenConstants.REFRESH_TOKEN_COOKIE_NAME)) {
+                    String refreshToken = cookie.getValue();
+                    if (refreshToken != null) {
+                        // Redis에서 refresh token 삭제
+                        String redisKey = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + refreshToken;
+                        refreshRepository.deleteById(redisKey);
+                    }
+                    // 쿠키 삭제 - CookieUtil.deleteCookie() 사용
+                    response.addCookie(CookieUtil.deleteCookie(TokenConstants.REFRESH_TOKEN_COOKIE_NAME));
+                    break;
+                }
+            }
         }
-
-        // 쿠키 이름을 TokenConstants를 사용하여 통일
-        String refresh = Arrays.stream(cookies)
-                .filter(cookie -> TokenConstants.REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
-
-        if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String category = jwtUtil.getCategory(refresh);
-        if (category == null || !category.equals(TokenConstants.REFRESH_TOKEN_CATEGORY)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        boolean isExist = refreshRepository.existsById(refresh);
-        if (!isExist) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String redisKey = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + refresh;
-        System.out.println("Deleting refresh token: " + redisKey);
-        refreshRepository.deleteById(redisKey);
-        System.out.println("Refresh token deleted.");
-
-        // 쿠키 이름을 TokenConstants를 사용하여 생성
-        Cookie cookie = CookieUtil.createCookie(TokenConstants.REFRESH_TOKEN_COOKIE_NAME, null, 0);
-        response.addCookie(cookie);
 
         SecurityContextHolder.clearContext();
-
         response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("Logged out successfully");
     }
 }

@@ -47,9 +47,8 @@ export default function NavBar() {
 
   // 이벤트 핸들러
   const handleLogout = () => {
-    logout();
-    navigate("/");
-    handleDrawerClose();
+    handleMenuClose();
+    navigate("/logout");
   };
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);

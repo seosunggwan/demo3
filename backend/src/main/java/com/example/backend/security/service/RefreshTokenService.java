@@ -1,5 +1,6 @@
 package com.example.backend.security.service;
 
+import com.example.backend.security.constant.TokenConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,13 @@ public class RefreshTokenService {
 
     private final RedisTemplate<String, String> redisTemplate; // 🔹 RedisTemplate 주입
 
-    private static final String REFRESH_TOKEN_PREFIX = "refreshToken:"; // 🔹 Redis Key Prefix
-
     /**
      * 🔹 Refresh Token을 Redis에 저장하는 메서드
      * - 사용자의 email을 Key로, Refresh Token을 Value로 저장
      * - TTL(만료 시간) 설정을 통해 자동 삭제되도록 구성
      */
     public void saveRefresh(String email, Integer expireS, String refresh) {
-        String key = REFRESH_TOKEN_PREFIX + email; // 🔹 Redis 저장 Key (ex: refreshToken:user@email.com)
+        String key = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + email; // 🔹 Redis 저장 Key (ex: refreshToken:user@email.com)
         redisTemplate.opsForValue().set(key, refresh, expireS, TimeUnit.SECONDS); // 🔹 TTL 설정하여 저장
     }
 
@@ -35,7 +34,7 @@ public class RefreshTokenService {
      * - Redis에서 해당 email의 Refresh Token을 가져옴
      */
     public String getRefreshToken(String email) {
-        String key = REFRESH_TOKEN_PREFIX + email;
+        String key = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + email;
         return redisTemplate.opsForValue().get(key); // 🔹 존재하지 않으면 null 반환
     }
 
@@ -44,7 +43,7 @@ public class RefreshTokenService {
      * - email 기반으로 삭제
      */
     public void deleteRefreshToken(String email) {
-        String key = REFRESH_TOKEN_PREFIX + email;
+        String key = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + email;
         redisTemplate.delete(key);
     }
 
@@ -53,12 +52,15 @@ public class RefreshTokenService {
      * - 토큰 값을 기준으로 삭제하는 방식
      */
     public void deleteRefreshTokenByToken(String refreshToken) {
-        String keyPattern = REFRESH_TOKEN_PREFIX + "*";
+        // 모든 키 패턴으로 검색
+        String keyPattern = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + "*";
         Set<String> keys = redisTemplate.keys(keyPattern);
+        
         if (keys != null) {
             for (String key : keys) {
                 String storedToken = redisTemplate.opsForValue().get(key);
                 if (refreshToken.equals(storedToken)) {
+                    System.out.println("토큰 삭제: " + key);
                     redisTemplate.delete(key);
                     break;
                 }

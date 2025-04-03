@@ -20,6 +20,21 @@ public class CookieUtil {
         cookie.setHttpOnly(true); // 🔹 XSS 공격 방지를 위해 httpOnly 설정 (JavaScript에서 접근 불가)
         cookie.setPath("/"); // 🔹 쿠키가 모든 경로에서 유효하도록 설정
         cookie.setMaxAge(expiredS); // 🔹 쿠키 만료 시간 설정 (초 단위)
+        cookie.setSecure(true); // 🔹 HTTPS에서만 전송되도록 설정
+        return cookie;
+    }
+
+    /**
+     * 🔹 쿠키를 삭제하기 위한 메서드
+     * - key: 삭제할 쿠키 이름
+     * - 원본 쿠키와 동일한 속성(path, secure, httpOnly)을 가진 삭제용 쿠키 생성
+     */
+    public static Cookie deleteCookie(String key) {
+        Cookie cookie = new Cookie(key, null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setSecure(true);
         return cookie;
     }
 }
