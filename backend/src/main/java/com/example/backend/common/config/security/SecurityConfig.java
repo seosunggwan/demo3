@@ -1,7 +1,6 @@
 package com.example.backend.common.config.security;
 
 import com.example.backend.security.customhandler.CustomFormSuccessHandler;
-import com.example.backend.security.customhandler.CustomLogoutFilter;
 import com.example.backend.security.customhandler.CustomOAuth2SuccessHandler;
 import com.example.backend.security.jwt.JWTFilter;
 import com.example.backend.security.jwt.JWTUtil;
@@ -87,14 +86,7 @@ public class SecurityConfig {
 
         http
                 .logout(auth -> auth
-                        .logoutUrl("/auth/logout")
-                        .clearAuthentication(true)
-                        .invalidateHttpSession(true)
-                        .deleteCookies(TokenConstants.REFRESH_TOKEN_COOKIE_NAME)
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().write("Logged out successfully");
-                        })
+                        .disable() // 기본 로그아웃 비활성화
                 );
 
         http
@@ -140,9 +132,6 @@ public class SecurityConfig {
 
         http    
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // ✅ JWT 기반 인증을 위해 STATELESS 모드 설정

@@ -1,6 +1,7 @@
 package com.example.backend.security.service;
 
 import com.example.backend.security.constant.TokenConstants;
+import com.example.backend.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class RefreshTokenService {
 
     private final RedisTemplate<String, String> redisTemplate; // 🔹 RedisTemplate 주입
+    private final JWTUtil jwtUtil;
 
     /**
      * 🔹 Refresh Token을 Redis에 저장하는 메서드
@@ -49,22 +51,30 @@ public class RefreshTokenService {
 
     /**
      * 🔹 Refresh Token 삭제 메서드 (토큰 기반)
-     * - 토큰 값을 기준으로 삭제하는 방식
+     * - 토큰에서 이메일을 추출하여 삭제
      */
     public void deleteRefreshTokenByToken(String refreshToken) {
-        // 모든 키 패턴으로 검색
-        String keyPattern = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + "*";
-        Set<String> keys = redisTemplate.keys(keyPattern);
-        
-        if (keys != null) {
-            for (String key : keys) {
-                String storedToken = redisTemplate.opsForValue().get(key);
-                if (refreshToken.equals(storedToken)) {
-                    System.out.println("토큰 삭제: " + key);
-                    redisTemplate.delete(key);
-                    break;
-                }
+        try {
+            String email = jwtUtil.getEmail(refreshToken);
+            if (email == null) {
+                System.out.println("토큰에서 이메일 추출 실패");
+                return;
             }
+            
+            String key = TokenConstants.REFRESH_TOKEN_REDIS_PREFIX + email;
+            System.out.println("삭제 시도할 Redis key: " + key);
+            
+            // Redis에 해당 key가 존재하는지 확인
+            Boolean exists = redisTemplate.hasKey(key);
+            if (Boolean.TRUE.equals(exists)) {
+                redisTemplate.delete(key);
+                System.out.println("Redis에서 토큰 삭제 성공: " + key);
+            } else {
+                System.out.println("Redis에 해당 key가 존재하지 않음: " + key);
+            }
+        } catch (Exception e) {
+            System.err.println("토큰 삭제 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

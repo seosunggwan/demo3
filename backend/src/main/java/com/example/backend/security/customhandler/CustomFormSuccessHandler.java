@@ -38,7 +38,7 @@ public class CustomFormSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         response.setHeader(TokenConstants.ACCESS_TOKEN_COOKIE_NAME, access_token); // Access Token을 응답 헤더에 추가
 
         // 🔹 Refresh Token 생성 (24시간 유효)
-        String refresh_token = jwtUtil.createJwt(TokenConstants.REFRESH_TOKEN_CATEGORY, email, role, TokenConstants.REFRESH_TOKEN_EXPIRATION_TIME);
+        String refresh_token = jwtUtil.createJwt(TokenConstants.REFRESH_TOKEN_CATEGORY, email, email, role, TokenConstants.REFRESH_TOKEN_EXPIRATION_TIME);
         response.addCookie(CookieUtil.createCookie(TokenConstants.REFRESH_TOKEN_COOKIE_NAME, refresh_token, (int)(TokenConstants.REFRESH_TOKEN_REDIS_TTL))); // Refresh Token을 쿠키에 저장
 
         // 🔹 Refresh Token을 DB에 저장
