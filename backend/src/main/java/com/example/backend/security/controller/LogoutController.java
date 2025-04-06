@@ -1,6 +1,5 @@
 package com.example.backend.security.controller;
 
-import com.example.backend.security.jwt.JWTUtil;
 import com.example.backend.security.service.LogoutService;
 import com.example.backend.security.constant.TokenConstants;
 import com.example.backend.security.util.CookieUtil;
@@ -24,7 +23,6 @@ import java.util.Arrays;
 public class LogoutController {
 
     private final LogoutService logoutService;
-    private final JWTUtil jwtUtil;
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {

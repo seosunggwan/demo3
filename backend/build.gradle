@@ -31,6 +31,10 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.574' // AWS SDK v1 추가
 
+	// WebRTC 관련 의존성
+	implementation 'org.kurento:kurento-client:7.0.0'
+	implementation 'org.kurento:kurento-utils-js:7.0.0'
+
 	// JWT (JSON Web Token) 인증 관련 라이브러리 (0.12.5 최신 버전)
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'

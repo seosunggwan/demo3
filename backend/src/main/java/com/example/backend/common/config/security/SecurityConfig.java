@@ -4,7 +4,6 @@ import com.example.backend.security.customhandler.CustomFormSuccessHandler;
 import com.example.backend.security.customhandler.CustomOAuth2SuccessHandler;
 import com.example.backend.security.jwt.JWTFilter;
 import com.example.backend.security.jwt.JWTUtil;
-import com.example.backend.security.repository.RefreshRepository;
 import com.example.backend.security.service.RefreshTokenService;
 import com.example.backend.security.service.form.CustomUserDetailsService;
 import com.example.backend.security.service.oauth2.CustomOAuth2UserService;
@@ -25,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
@@ -38,7 +36,6 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final RefreshTokenService refreshTokenService;
-    private final RefreshRepository refreshRepository;
     private final CustomUserDetailsService customUserDetailsService; // ✅ 사용자 정보 조회 서비스 추가
     private final OAuthUserEntityToUserEntityService oAuthUserEntityToUserEntityService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder; // AppConfig에서 주입받기
