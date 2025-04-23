@@ -2,7 +2,7 @@ import axios from "axios";
 import fetchReissue from "./fetchReissue";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },

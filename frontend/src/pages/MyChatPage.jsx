@@ -25,8 +25,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
 // API 기본 URL 설정 (환경 변수가 없을 경우 폴백 URL 사용)
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = "/api";
 
 /**
  * 📌 내 채팅 목록 컴포넌트 (React 변환)

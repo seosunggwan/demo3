@@ -41,7 +41,7 @@ export default function ChatPage() {
   const connectWebSocket = () => {
     setStatus("connecting");
 
-    const socket = new SockJS("http://localhost:8080/connect");
+    const socket = new SockJS("/api/connect");
     const client = Stomp.over(socket);
 
     // 디버그 로그 비활성화

@@ -23,7 +23,7 @@ const OAuth2Redirect = () => {
     try {
       // axios 요청 설정
       const response = await axios.post(
-        "http://localhost:8080/oauth2-jwt-header",
+        "/api/oauth2-jwt-header",
         {},
         {
           withCredentials: true, // 쿠키 기반 인증 포함

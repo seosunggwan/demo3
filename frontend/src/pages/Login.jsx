@@ -46,16 +46,12 @@ const LoginForm = () => {
       params.append("email", credentials.email);
       params.append("password", credentials.password);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}/login`,
-        params,
-        {
-          withCredentials: true, // 쿠키 포함하여 요청
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      const response = await axios.post(`/api/login`, params, {
+        withCredentials: true, // 쿠키 포함하여 요청
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
 
       console.log("🔍 [서버 응답 상태]:", response.status);
       console.log("📩 [서버 응답 헤더]:", response.headers);
@@ -179,11 +175,7 @@ const LoginForm = () => {
 
           <Grid container spacing={2} justifyContent="center" sx={{ mt: 2 }}>
             <Grid item>
-              <a
-                href={`${
-                  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"
-                }/oauth2/authorization/naver`}
-              >
+              <a href="/api/oauth2/authorization/naver">
                 <img
                   src="naver_icon.png"
                   alt="naver"
@@ -192,11 +184,7 @@ const LoginForm = () => {
               </a>
             </Grid>
             <Grid item>
-              <a
-                href={`${
-                  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"
-                }/oauth2/authorization/google`}
-              >
+              <a href="/api/oauth2/authorization/google">
                 <img
                   src="google_icon.png"
                   alt="google"
@@ -205,11 +193,7 @@ const LoginForm = () => {
               </a>
             </Grid>
             <Grid item>
-              <a
-                href={`${
-                  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"
-                }/oauth2/authorization/github`}
-              >
+              <a href="/api/oauth2/authorization/github">
                 <img
                   src="github_icon.png"
                   alt="github"

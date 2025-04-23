@@ -20,15 +20,10 @@ const Logout = () => {
     try {
       console.log("로그아웃 요청 시작");
 
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"
-        }/auth/logout`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
 
       console.log("로그아웃 응답 상태:", response.status);
 

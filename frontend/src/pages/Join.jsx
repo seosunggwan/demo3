@@ -39,16 +39,12 @@ const JoinForm = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}/join`,
-        credentials,
-        {
-          withCredentials: true, // 쿠키 포함하여 요청
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(`/api/join`, credentials, {
+        withCredentials: true, // 쿠키 포함하여 요청
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       // 회원가입 성공 시 로그인 페이지로 이동
       if (response.status === 200) {

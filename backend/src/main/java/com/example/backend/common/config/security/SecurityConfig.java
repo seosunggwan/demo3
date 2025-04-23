@@ -97,10 +97,15 @@ public class SecurityConfig {
                     return configuration;
                 }));
 
-        http
+                http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
                         "/", 
+                        "/index.html", 
+                        "/static/**", 
+                        "/assets/**", 
+                        "/favicon.ico", 
+                        "/manifest.json",
                         "/login", 
                         "/join",
                         "/oauth2-jwt-header", 

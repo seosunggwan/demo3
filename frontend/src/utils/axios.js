@@ -2,7 +2,7 @@ import axios from "axios";
 import fetchReissue from "../services/fetchReissue";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
+  baseURL: "/api",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -36,7 +36,9 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log(`응답 에러: ${originalRequest?.url}, 상태: ${error.response?.status}`);
+    console.log(
+      `응답 에러: ${originalRequest?.url}, 상태: ${error.response?.status}`
+    );
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       console.log("🔄 401 에러 발생, 토큰 갱신 시도 중...");
@@ -49,11 +51,15 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(originalRequest);
         } else {
           console.log("❌ 토큰 갱신 실패");
-          return Promise.reject(new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다."));
+          return Promise.reject(
+            new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다.")
+          );
         }
       } catch (refreshError) {
         console.error("❌ 토큰 갱신 중 오류 발생:", refreshError);
-        return Promise.reject(new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다."));
+        return Promise.reject(
+          new Error("인증이 만료되었습니다. 다시 로그인이 필요합니다.")
+        );
       }
     }
     return Promise.reject(error);
