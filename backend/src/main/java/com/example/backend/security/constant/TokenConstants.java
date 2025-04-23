@@ -1,7 +1,7 @@
 package com.example.backend.security.constant;
 
 public class TokenConstants {
-    public static final long ACCESS_TOKEN_EXPIRATION_TIME = 5 * 1000L; // 5초 (밀리초)
+    public static final long ACCESS_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000L; // 30분 (밀리초)
     public static final String ACCESS_TOKEN_CATEGORY = "access_token";
 
     public static final long REFRESH_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L; // 24시간 (밀리초)

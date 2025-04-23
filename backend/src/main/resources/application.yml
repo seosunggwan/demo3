@@ -53,9 +53,9 @@ spring:
 
   data:
     redis:
-      host: redis-19029.c340.ap-northeast-2-1.ec2.redns.redis-cloud.com
-      port: 19029
-      password: dXSjgKeNgw7qpveqJBHauTpUdjrVjopg
+      host: redis-11563.c244.us-east-1-2.ec2.redns.redis-cloud.com
+      port: 11563
+      password: Aj5rjRZlKtvt39genjPOqafobJZrWFKM
 
   # JWT ??
   jwt:
@@ -142,9 +142,9 @@ spring:
 
   data:
     redis:
-      host: redis-19029.c340.ap-northeast-2-1.ec2.redns.redis-cloud.com
-      port: 19029
-      password: dXSjgKeNgw7qpveqJBHauTpUdjrVjopg
+      host: redis-11563.c244.us-east-1-2.ec2.redns.redis-cloud.com
+      port: 11563
+      password: Aj5rjRZlKtvt39genjPOqafobJZrWFKM
 
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
@@ -229,9 +229,9 @@ spring:
 
   data:
     redis:
-      host: redis-19029.c340.ap-northeast-2-1.ec2.redns.redis-cloud.com
-      port: 19029
-      password: dXSjgKeNgw7qpveqJBHauTpUdjrVjopg
+      host: redis-11563.c244.us-east-1-2.ec2.redns.redis-cloud.com
+      port: 11563
+      password: Aj5rjRZlKtvt39genjPOqafobJZrWFKM
 
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
